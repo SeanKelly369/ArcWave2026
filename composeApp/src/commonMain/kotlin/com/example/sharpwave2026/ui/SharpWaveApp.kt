@@ -16,9 +16,9 @@ fun SharpWaveApp() {
     LaunchedEffect(Unit) {
         player.setQueue(
             listOf(
-                Track("1", "Xurious The Second Coming"),
-                Track("2", "Xurious The Stranger"),
-                Track("3", "Xurious We Have Dreamed The Same Dream")
+                Track("xurious_the_second_coming", "Xurious The Second Coming", artist = "Xurious"),
+                Track("xurious_the_stranger", "Xurious The Stranger", artist = "Xurious"),
+                Track("xurious_we_have_dreamed_the_same_dream", "Xurious We Have Dreamed The Same Dream", artist = "Xurious")
             ),
             startIndex = 0
         )
