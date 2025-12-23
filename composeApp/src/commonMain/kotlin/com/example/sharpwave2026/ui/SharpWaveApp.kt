@@ -58,7 +58,7 @@ fun SharpWaveApp() {
                         .clickable { player.setQueue(state.queue, idx ); player.play() },
                     trailingContent = { if (idx == state.index ) Text(if (state.isPlaying) "▶" else "Ⅱ") }
                 )
-                Divider()
+                HorizontalDivider()
             }
         }
     }
