@@ -18,10 +18,10 @@ import com.example.sharpwave2026.utils.formatMs
 fun SharpWaveApp(
 ) {
 
-    val player = remember { providePlayer() }
+    val player = providePlayer()
     val state by player.state.collectAsState(PlayerState())
 
-    val library = remember { provideAudioLibrary() }
+    val library = provideAudioLibrary()
 
     var loadError by remember { mutableStateOf<String?>(null) }
     var isLoading by remember { mutableStateOf(false) }
