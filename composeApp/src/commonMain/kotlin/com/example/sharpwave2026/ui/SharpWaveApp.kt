@@ -10,28 +10,42 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.example.sharpwave2026.library.PlayListStore
 import com.example.sharpwave2026.library.provideAudioLibrary
-import com.example.sharpwave2026.player.*
+import com.example.sharpwave2026.player.PlayerState
+import com.example.sharpwave2026.player.Track
+import com.example.sharpwave2026.player.providePlayer
 import com.example.sharpwave2026.utils.formatMs
 
 @Composable
-fun SharpWaveApp(
-) {
+fun SharpWaveApp() {
 
     val player = providePlayer()
     val state by player.state.collectAsState(PlayerState())
 
     val library = provideAudioLibrary()
 
+    val playListStore = remember { PlayListStore() }
+    val playlists by playListStore.playlists.collectAsState()
+
+    var allTracks by remember { mutableStateOf<List<Track>>(emptyList()) }
+
+    var showSaveDialog by remember { mutableStateOf(false) }
+    var newPlayListName by remember { mutableStateOf("") }
+
     var loadError by remember { mutableStateOf<String?>(null) }
     var isLoading by remember { mutableStateOf(false) }
     var reloadToken by remember { mutableStateOf(0) }
+
+    val scope = rememberCoroutineScope()
 
     LaunchedEffect(reloadToken) {
         isLoading = true
         loadError = null
         try {
             val tracks = library.scanTracks()
+            allTracks = tracks
+
             if (tracks.isNotEmpty()) {
                 player.setQueue(tracks, startIndex = 0)
             } else {
@@ -54,6 +68,11 @@ fun SharpWaveApp(
         if (!isDragging) dragMs = pos
     }
 
+    fun resolveTracksByUri(trackUris: List<String>, all: List<Track>): List<Track> {
+        val map = all.associateBy { it.uri }
+        return trackUris.mapNotNull { map[it] }
+    }
+
     MaterialTheme {
         Column(
             Modifier
@@ -68,7 +87,7 @@ fun SharpWaveApp(
                 textAlign = TextAlign.Center
             )
 
-            Spacer(Modifier.height((8.dp)))
+            Spacer(Modifier.height(8.dp))
 
             Row(
                 Modifier.fillMaxWidth(),
@@ -81,22 +100,63 @@ fun SharpWaveApp(
                     Text("Tracks: ${state.queue.size}", style = MaterialTheme.typography.bodyMedium)
                 }
 
-                OutlinedButton(onClick = { reloadToken++ }) {
-                    Text("Reload")
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    OutlinedButton(onClick = { reloadToken++ }) { Text("Reload") }
+                    OutlinedButton(
+                        onClick = { showSaveDialog = true },
+                        enabled = state.queue.isNotEmpty()
+                    ) { Text("Save queue") }
                 }
             }
 
-            if (loadError != null) {
+            loadError?.let {
                 Spacer(Modifier.height(6.dp))
                 Text(
-                    text = loadError!!,
+                    text = it,
                     style = MaterialTheme.typography.bodySmall,
                     color = Color(0xFF444444)
                 )
             }
 
-            Spacer(Modifier.height(8.dp))
+            // Save Queue dialog
+            if (showSaveDialog) {
+                AlertDialog(
+                    onDismissRequest = { showSaveDialog = false },
+                    confirmButton = {
+                        TextButton(
+                            onClick = {
+                                val uris = state.queue.mapNotNull { t ->
+                                    t.uri.takeIf { it.isNotBlank() }
+                                }
+                                if (uris.isNotEmpty()) {
+                                    playListStore.saveQueueAsPlaylist(
+                                        name = newPlayListName.ifBlank { "Queue" },
+                                        queue = uris
+                                    )
+                                }
+                                newPlayListName = ""
+                                showSaveDialog = false
+                            }
+                        ) { Text("Save") }
+                    },
+                    dismissButton = {
+                        TextButton(onClick = { showSaveDialog = false }) { Text("Cancel") }
+                    },
+                    title = { Text("Save queue as playlist") },
+                    text = {
+                        OutlinedTextField(
+                            value = newPlayListName,
+                            onValueChange = { newPlayListName = it },
+                            label = { Text("Playlist name") },
+                            singleLine = true
+                        )
+                    }
+                )
+            }
 
+            Spacer(Modifier.height(12.dp))
+
+            // Now Playing card
             Card(Modifier.fillMaxWidth()) {
                 Column(Modifier.padding(12.dp)) {
                     Text(
@@ -109,9 +169,7 @@ fun SharpWaveApp(
                     )
                     Spacer(Modifier.height(12.dp))
 
-                    Box(
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
+                    Box(modifier = Modifier.fillMaxWidth()) {
                         OutlinedButton(
                             onClick = player::prev,
                             enabled = state.queue.isNotEmpty(),
@@ -122,25 +180,13 @@ fun SharpWaveApp(
                             onClick = player::toggle,
                             enabled = state.queue.isNotEmpty(),
                             modifier = Modifier.align(Alignment.Center)
-                        ) {
-                            Text(if (state.isPlaying) "Pause" else "Play")
-                        }
+                        ) { Text(if (state.isPlaying) "Pause" else "Play") }
 
                         OutlinedButton(
                             onClick = player::next,
                             enabled = state.queue.isNotEmpty(),
                             modifier = Modifier.align(Alignment.CenterEnd)
                         ) { Text("Next") }
-                    }
-
-                    val dur = state.durationMs.coerceAtLeast(1L)
-                    val pos = state.positionMs.coerceIn(0L, dur)
-
-                    var isDragging by remember { mutableStateOf(false) }
-                    var dragMs by remember { mutableStateOf(0L) }
-
-                    LaunchedEffect(pos, dur, isDragging) {
-                        if (!isDragging) dragMs = pos
                     }
 
                     Slider(
@@ -156,13 +202,20 @@ fun SharpWaveApp(
                         enabled = state.queue.isNotEmpty() && dur > 1L,
                         modifier = Modifier.fillMaxWidth()
                     )
+
                     Spacer(Modifier.height(6.dp))
+
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        Text(formatMs(dragMs), style = MaterialTheme.typography.labelMedium, fontFamily = FontFamily.Monospace)
-                        Text(formatMs(dur),
+                        Text(
+                            formatMs(dragMs),
+                            style = MaterialTheme.typography.labelMedium,
+                            fontFamily = FontFamily.Monospace
+                        )
+                        Text(
+                            formatMs(dur),
                             style = MaterialTheme.typography.labelMedium,
                             fontFamily = FontFamily.Monospace,
                             color = Color(0xFF444444)
@@ -172,17 +225,54 @@ fun SharpWaveApp(
             }
 
             Spacer(Modifier.height(16.dp))
+
+            // Playlists
+            Text("Playlists", style = MaterialTheme.typography.titleMedium)
+            Spacer(Modifier.height(8.dp))
+
+            if (playlists.isEmpty()) {
+                Text("No playlists yet.", style = MaterialTheme.typography.bodySmall, color = Color(0xFF444444))
+            } else {
+                playlists.forEach { pl ->
+                    ListItem(
+                        headlineContent = { Text(pl.name) },
+                        supportingContent = { Text("${pl.trackUris.size} tracks") },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable {
+                                val tracks = resolveTracksByUri(pl.trackUris, allTracks)
+                                if (tracks.isNotEmpty()) {
+                                    player.setQueue(tracks, startIndex = 0)
+                                    player.play()
+                                }
+                            },
+                        trailingContent = {
+                            TextButton(onClick = { playListStore.delete(pl.id) }) { Text("Delete") }
+                        }
+                    )
+                    HorizontalDivider()
+                }
+            }
+
+            Spacer(Modifier.height(16.dp))
+
+            // Queue
             Text("Queue", style = MaterialTheme.typography.titleMedium)
             Spacer(Modifier.height(8.dp))
 
-            state.queue.forEachIndexed { idx,  t ->
+            state.queue.forEachIndexed { idx, t ->
                 ListItem(
                     headlineContent = { Text(t.title) },
                     supportingContent = { Text(t.artist) },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .clickable { player.setQueue(state.queue, idx ); player.play() },
-                    trailingContent = { if (idx == state.index ) Text(if (state.isPlaying) "▶" else "Ⅱ") }
+                        .clickable {
+                            player.setQueue(state.queue, idx)
+                            player.play()
+                        },
+                    trailingContent = {
+                        if (idx == state.index) Text(if (state.isPlaying) "▶" else "Ⅱ")
+                    }
                 )
                 HorizontalDivider()
             }

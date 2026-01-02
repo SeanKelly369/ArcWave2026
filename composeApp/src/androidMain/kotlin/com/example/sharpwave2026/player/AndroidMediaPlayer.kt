@@ -2,6 +2,8 @@ package com.example.sharpwave2026.player
 
 import android.content.Context
 import android.media.MediaPlayer
+import android.net.Uri
+import android.util.Log
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -93,12 +95,38 @@ class AndroidMediaPlayer(
         release()
 
         val track = queue.getOrNull(index) ?: return
-        val rawName = track.uri.ifBlank { track.id }
-        val resId = context.resources.getIdentifier(rawName, "raw", context.packageName)
-        require(resId != 0) { "Raw resource not found: res/raw/$rawName(.mp3)" }
+        val source = track.uri.ifBlank { track.id }
+        val parsed = Uri.parse(source)
 
-        val created = MediaPlayer.create(context, resId)
+        val created = MediaPlayer()
         mp = created
+
+        try {
+            if (parsed.scheme == "content" || parsed.scheme == "file") {
+                created.setDataSource(context, parsed)
+                created.prepare() // OK for local; use prepareAsync if you want
+            } else {
+                val rawName = source
+                    .removePrefix("res/raw/")
+                    .substringBeforeLast(".mp3")
+                    .substringBeforeLast(".wav")
+                    .substringBeforeLast(".m4a")
+
+                val resId = context.resources.getIdentifier(rawName, "raw", context.packageName)
+                require(resId != 0) { "Raw resource not found: res/raw/$rawName(.mp3)" }
+
+                context.resources.openRawResourceFd(resId).use { afd ->
+                    created.setDataSource(afd.fileDescriptor, afd.startOffset, afd.length)
+                }
+                created.prepare()
+            }
+        } catch( t: Throwable ) {
+            // Important: don’t leave mp set to a broken player instance
+            Log.e("AndroidMediaPlayer", "Failed to prepare track source=$source", t)
+            created.release()
+            mp = null
+            throw t
+        }
 
         created.setOnCompletionListener {
             stopTicker()

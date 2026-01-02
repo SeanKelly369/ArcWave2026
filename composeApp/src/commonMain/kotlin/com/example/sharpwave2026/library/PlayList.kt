@@ -5,8 +5,8 @@ import com.example.sharpwave2026.player.Track
 data class PlayList(
     val id: String,
     val name: String,
-    val tracks: List<Track>,
-    val kind: Kind = Kind.Auto
+    val trackUris: List<String>,
+    val kind: Kind = Kind.Manual
 ) {
     enum class Kind { Auto, Manual }
 }
