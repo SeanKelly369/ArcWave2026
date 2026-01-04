@@ -33,9 +33,8 @@ node_modules/
 # Xcode / iOS user files
 **/xcuserdata/
 
+
 # If you have Xcode projects in-repo (often generated)
-*.xcodeproj/*
-!*.xcodeproj/project.pbxproj
 !*.xcodeproj/xcshareddata/
 !*.xcodeproj/project.xcworkspace/
 !*.xcworkspace/contents.xcworkspacedata

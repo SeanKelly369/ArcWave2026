@@ -1,5 +1,7 @@
 package com.example.sharpwave2026.library
 
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import com.example.sharpwave2026.player.Track
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.coroutines.Dispatchers
@@ -9,19 +11,27 @@ import platform.Foundation.NSDirectoryEnumerationSkipsHiddenFiles
 import platform.Foundation.NSFileManager
 import platform.Foundation.NSURL
 import platform.Foundation.NSDocumentDirectory
+import platform.Foundation.NSLog
 import platform.Foundation.NSUserDomainMask
 
-actual fun provideAudioLibrary(): AudioLibrary = IosAudioLibrary()
-
+@Composable
+actual fun provideAudioLibrary(): AudioLibrary = remember { IosAudioLibrary() }
 private class IosAudioLibrary: AudioLibrary {
 
     override suspend fun scanTracks(): List<Track> = withContext(Dispatchers.Default) {
-        val tracks = mutableListOf<Track>()
 
-        tracks += scanDirectoryForMp3s(documentDirUrl())
-        tracks += scanBundleForMp3s()
 
-        tracks
+        val docs = documentDirUrl()
+
+        // 1 scan documents
+        var tracks = scanDirectoryForAudio(docs)
+
+        // 2 if empty, seed from bundle (dev convenience, then re-scan
+        if (tracks.isEmpty()) {
+            seedBundleAudioIntoDocuments(docs)
+            tracks = scanDirectoryForAudio(docs)
+        }
+        tracks.sortedBy { it.title.lowercase() }
     }
 
     @OptIn(ExperimentalForeignApi::class)
@@ -37,7 +47,7 @@ private class IosAudioLibrary: AudioLibrary {
         return requireNotNull(url) { "Could not resolve Documents directory URL" }
     }
 
-    private fun scanDirectoryForMp3s(dir: NSURL): List<Track> {
+    private fun scanDirectoryForAudio(dir: NSURL): List<Track> {
         val fm = NSFileManager.defaultManager
         val enumerator = fm.enumeratorAtURL(
             url = dir,
@@ -47,38 +57,68 @@ private class IosAudioLibrary: AudioLibrary {
         ) ?: return emptyList()
 
         val out = mutableListOf<Track>()
-        while (true) {
-            val url = enumerator.nextObject() as? NSURL ?: break
-            val path = url.path ?: continue
-            if (!path.lowercase().endsWith(".mp3")) continue
 
-            val name = (url.lastPathComponent ?: "Unknown").removeSuffix(".mp3")
+        while (true) {
+            val next = enumerator.nextObject() ?: break
+
+            val url: NSURL = when (next) {
+                is NSURL -> next
+                is String -> dir.URLByAppendingPathComponent(next) ?: continue
+                else -> continue
+            }
+
+            val last = url.lastPathComponent ?: continue
+            val lower = last.lowercase()
+
+            val ext =
+                when {
+                    lower.endsWith(".mp3") -> "mp3"
+                    lower.endsWith(".m4a") -> "m4a"
+                    lower.endsWith(".wav") -> "wav"
+                    else -> null
+                } ?: continue
+
+            // Use file://... for playback
+            val fileUrlString = url.absoluteString ?: continue
+
+            val title = last
+                .removeSuffix(".$ext")
+                .replace('_', ' ')
 
             out += Track(
-                id = name,
-                title = name.replace('_', ' '),
-                artist = "Unknown Artist",
-                uri = path // Absolute path
+                id = fileUrlString,
+                title = title,
+                artist = "",
+                uri = fileUrlString
             )
         }
         return out
     }
 
-    private fun scanBundleForMp3s(): List<Track> {
-        val urls = NSBundle.mainBundle.URLsForResourcesWithExtension("mp3", subdirectory = null)
-            ?: return emptyList()
+    @OptIn(ExperimentalForeignApi::class)
+    private fun seedBundleAudioIntoDocuments(docs: NSURL) {
+        val fm = NSFileManager.defaultManager
 
-        return urls.mapNotNull { anyUrl ->
-            val url = anyUrl as? NSURL ?: return@mapNotNull null
-            val path = url.path ?: return@mapNotNull null
-            val name = (url.lastPathComponent ?: "Unknown").removeSuffix(".mp3")
+        fun bundleUrls(ext: String): List<NSURL> =
+            NSBundle.mainBundle.URLsForResourcesWithExtension(ext, subdirectory = null).orEmpty() as List<NSURL>
 
-            Track(
-                id = name,
-                title = name.replace('_', ' '),
-                artist = "Bundled",
-                uri = path
-            )
+        val all = buildList {
+            addAll(bundleUrls("mp3"))
+            addAll(bundleUrls("m4a"))
+            addAll(bundleUrls("wav"))
+        }
+
+        for (src in all) {
+            val name = src.lastPathComponent ?: continue
+            val dest = docs.URLByAppendingPathComponent(name) ?: continue
+            val destPath = dest.path ?: continue
+
+            if (fm.fileExistsAtPath(destPath)) continue
+
+            val ok = fm.copyItemAtURL(src, dest, error = null)
+            if (!ok) {
+                NSLog("AudioLibrary: failed to copy bundle audio %@ -> %@", src.absoluteString ?: "", dest.absoluteString ?: "")
+            }
         }
     }
 }

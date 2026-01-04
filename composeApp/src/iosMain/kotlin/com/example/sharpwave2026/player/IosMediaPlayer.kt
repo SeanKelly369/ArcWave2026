@@ -23,9 +23,13 @@ import platform.AVFAudio.AVAudioSessionCategoryPlayback
 import platform.AVFAudio.setActive
 import platform.Foundation.NSBundle
 import platform.Foundation.NSError
+import platform.Foundation.NSHomeDirectory
+import platform.Foundation.NSURL
 import platform.darwin.NSObject
+import kotlinx.cinterop.BetaInteropApi
+import platform.Foundation.NSLog
 
-@OptIn(ExperimentalForeignApi::class)
+@OptIn(ExperimentalForeignApi::class, BetaInteropApi::class)
 class IosMediaPlayer: Player {
 
     private val job = SupervisorJob()
@@ -56,6 +60,7 @@ class IosMediaPlayer: Player {
     }
 
     init {
+        NSLog("IosMediaPlayer INIT")
         val session = AVAudioSession.sharedInstance()
         session.setCategory(AVAudioSessionCategoryPlayback, error = null)
         session.setActive(true, error = null)
@@ -85,6 +90,7 @@ class IosMediaPlayer: Player {
             return
         }
 
+        ensureSession()
         player.play()
         _state.value = _state.value.copy(isPlaying = true)
         startTicker()
@@ -131,15 +137,19 @@ class IosMediaPlayer: Player {
         release()
 
         val track = queue.getOrNull(index) ?: return
-        val name = track.uri.ifBlank { track.id }
 
-        val url = NSBundle.mainBundle.URLForResource(name, withExtension = "mp3")
-            ?: error("Track not found in iOS bundle: $name.mp3")
+        val url = resolveTrackUrl(track)
+            ?: error("Track URL not found (bundle or file): id=${track.id} uri=${track.uri}")
 
         memScoped {
             val err = alloc<ObjCObjectVar<NSError?>>()
+
             val player = AVAudioPlayer(contentsOfURL = url, error = err.ptr)
-                ?: error("AVAudioPlayer failed: ${err.value?.localizedDescription ?: "unknown"}")
+
+                val initError = err.value
+                require(initError == null) {
+                    "AVAudioPlayer failed: ${initError?.localizedDescription ?: "unknown"}"
+                }
 
             player.delegate = delegate
             player.prepareToPlay()
@@ -156,6 +166,49 @@ class IosMediaPlayer: Player {
         } else {
             _state.value = _state.value.copy(isPlaying = false)
         }
+    }
+
+    private fun resolveTrackUrl(track: Track): NSURL? {
+        val raw = track.uri.trim()
+
+        if (raw.isNotEmpty()) {
+            val direct = NSURL(string = raw)
+            if (direct != null) return direct
+
+            val expanded = expandTile(raw)
+            if (expanded.startsWith("/")) {
+                return NSURL.fileURLWithPath(expanded)
+            }
+
+            val noExt = stripExtension(raw)
+            NSBundle.mainBundle.URLForResource(noExt, withExtension = "mp3")?.let { return it }
+            NSBundle.mainBundle.URLForResource(noExt, withExtension = "m4a")?.let { return it }
+            NSBundle.mainBundle.URLForResource(noExt, withExtension = "wav")?.let { return it }
+        }
+
+        val idNoExt = stripExtension(track.id)
+        NSBundle.mainBundle.URLForResource(idNoExt, withExtension = "mp3")?.let { return it }
+        NSBundle.mainBundle.URLForResource(idNoExt, withExtension = "m4a")?.let { return it }
+        return NSBundle.mainBundle.URLForResource(idNoExt, withExtension = "wav")
+    }
+
+    private fun expandTile(path: String): String {
+        return when {
+            path == "~" -> NSHomeDirectory()
+            path.startsWith("~/") -> NSHomeDirectory() + path.removePrefix("~")
+            else -> path
+        }
+    }
+
+    private fun stripExtension(filename: String): String {
+        val dot = filename.lastIndexOf('.')
+        return if (dot > 0) filename.substring(0, dot) else filename
+    }
+
+    private fun ensureSession() {
+        val session = AVAudioSession.sharedInstance()
+        session.setCategory(AVAudioSessionCategoryPlayback, error = null)
+        session.setActive(true, error = null)
     }
 
     private fun startTicker() {
