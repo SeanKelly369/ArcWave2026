@@ -7,5 +7,5 @@ import androidx.compose.ui.platform.LocalContext
 @Composable
 actual fun providePlayer(): Player {
     val ctx = LocalContext.current.applicationContext
-    return remember { AndroidMediaPlayer(ctx) }
+    return remember(ctx) { AndroidMediaPlayer(context = ctx) }
 }
