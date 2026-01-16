@@ -1,11 +1,13 @@
 package com.example.sharpwave2026.ui
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
@@ -16,6 +18,11 @@ import com.example.sharpwave2026.player.PlayerState
 import com.example.sharpwave2026.player.Track
 import com.example.sharpwave2026.player.providePlayer
 import com.example.sharpwave2026.utils.formatMs
+import com.example.sharpwave2026.utils.logd
+import com.example.sharpwave2026.utils.loge
+import org.jetbrains.compose.resources.painterResource
+import sharpwave2026.composeapp.generated.resources.Res
+import sharpwave2026.composeapp.generated.resources.open_close_arrow
 
 @Composable
 fun SharpWaveApp() {
@@ -36,30 +43,51 @@ fun SharpWaveApp() {
     var loadError by remember { mutableStateOf<String?>(null) }
     var isLoading by remember { mutableStateOf(false) }
     var reloadToken by remember { mutableStateOf(0) }
-
-    val scope = rememberCoroutineScope()
+    val TAG = "SharpWaveApp"
 
     LaunchedEffect(reloadToken) {
+        logd(TAG, "Reload triggered. reloadToken=$reloadToken")
         isLoading = true
         loadError = null
         try {
+            logd(TAG, "Scanning tracks…")
             val tracks = library.scanTracks()
+            logd(TAG, "Scan complete. tracksFound=${tracks.size}")
+
             allTracks = tracks
 
             if (tracks.isNotEmpty()) {
+                logd(TAG, "Setting queue. startIndex=0 firstUri=${tracks.firstOrNull()?.uri}")
                 player.setQueue(tracks, startIndex = 0)
             } else {
                 loadError = "No audio files found (or permission not granted yet)."
+                logd(TAG, "No tracks found. loadError set.")
             }
         } catch (t: Throwable) {
             loadError = t.message ?: t.toString()
+            loge(TAG, "scanTracks failed: $loadError", t)
         } finally {
             isLoading = false
+            logd(TAG, "Loading finished. isLoading=false loadError=${loadError != null}")
         }
     }
 
     val dur = state.durationMs.coerceAtLeast(1L)
     val pos = state.positionMs.coerceIn(0L, dur)
+
+    // 20 minutes in ms
+    val showArcToggle = dur >= 20L * 60L * 1000L && state.queue.isNotEmpty()
+
+    var arcMenuOpen by remember { mutableStateOf(false) }
+
+    LaunchedEffect(state.current?.uri) {
+        arcMenuOpen = false
+        val cur = state.current
+        logd(
+            TAG,
+            "Track change -> arcMenuOpen=false; uri=${cur?.uri} title=${cur?.title} index=${state.index}/${state.queue.size}"
+        )
+    }
 
     var isDragging by remember { mutableStateOf(false) }
     var dragMs by remember { mutableStateOf(0L) }
@@ -222,7 +250,39 @@ fun SharpWaveApp() {
                         )
                     }
                 }
+
+                // Arrow
+                Spacer(Modifier.height(6.dp))
+
+                if (showArcToggle) {
+                   Row (
+                       modifier = Modifier.fillMaxWidth(),
+                       horizontalArrangement = Arrangement.End
+                   ) {
+                       IconButton(onClick = {
+                           arcMenuOpen = !arcMenuOpen
+                           logd(TAG, "Arc menu toggled. arcMenuOpen=$arcMenuOpen showArcToggle=$showArcToggle durMs=$dur")
+                       }) {
+                           Icon(
+                               painter = painterResource(Res.drawable.open_close_arrow),
+                               contentDescription = if (arcMenuOpen) "Close arc menu" else "Open arc menu",
+                               modifier = Modifier.rotate(if (arcMenuOpen) 180f else 0f)
+                           )
+                       }
+                   }
+
+                    // Menu area that reveals the arc UI
+                    AnimatedVisibility(visible = arcMenuOpen) {
+                        Column (
+                            modifier = Modifier.fillMaxWidth()
+                            .padding(8.dp)
+                        ) {
+                            Text("Arc UI coming soon!")
+                        }
+                    }
+                }
             }
+
 
             Spacer(Modifier.height(16.dp))
 
