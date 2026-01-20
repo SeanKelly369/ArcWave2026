@@ -20,9 +20,6 @@ import com.example.sharpwave2026.player.providePlayer
 import com.example.sharpwave2026.utils.formatMs
 import com.example.sharpwave2026.utils.logd
 import com.example.sharpwave2026.utils.loge
-import org.jetbrains.compose.resources.painterResource
-import sharpwave2026.composeapp.generated.resources.Res
-import sharpwave2026.composeapp.generated.resources.open_close_arrow
 
 @Composable
 fun SharpWaveApp() {
@@ -76,7 +73,8 @@ fun SharpWaveApp() {
     val pos = state.positionMs.coerceIn(0L, dur)
 
     // 20 minutes in ms
-    val showArcToggle = dur >= 20L * 60L * 1000L && state.queue.isNotEmpty()
+//    val showArcToggle = dur >= 20L * 60L * 1000L && state.queue.isNotEmpty()
+    val showArcToggle = false
 
     var arcMenuOpen by remember { mutableStateOf(false) }
 
@@ -264,7 +262,7 @@ fun SharpWaveApp() {
                            logd(TAG, "Arc menu toggled. arcMenuOpen=$arcMenuOpen showArcToggle=$showArcToggle durMs=$dur")
                        }) {
                            Icon(
-                               painter = painterResource(Res.drawable.open_close_arrow),
+                               painter = appIconPainter(AppIcon.OpenCloseArrow),
                                contentDescription = if (arcMenuOpen) "Close arc menu" else "Open arc menu",
                                modifier = Modifier.rotate(if (arcMenuOpen) 180f else 0f)
                            )

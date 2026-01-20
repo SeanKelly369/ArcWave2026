@@ -37,9 +37,9 @@ class IosMediaPlayer: Player {
     private var ticker: Job? = null
     private val tickMs = 200L
 
-    private var ap: AVAudioPlayer? = null;
+    private var ap: AVAudioPlayer? = null
     private var queue: List<Track> = emptyList()
-    private var index: Int = -1;
+    private var index: Int = -1
 
     private val _state = MutableStateFlow(PlayerState())
     override val state: Flow<PlayerState> = _state.asStateFlow()
@@ -144,6 +144,7 @@ class IosMediaPlayer: Player {
         memScoped {
             val err = alloc<ObjCObjectVar<NSError?>>()
 
+            ensureSession()
             val player = AVAudioPlayer(contentsOfURL = url, error = err.ptr)
 
                 val initError = err.value
@@ -172,8 +173,8 @@ class IosMediaPlayer: Player {
         val raw = track.uri.trim()
 
         if (raw.isNotEmpty()) {
-            val direct = NSURL(string = raw)
-            if (direct != null) return direct
+            //val direct = NSURL(string = raw)
+            //if (direct != null) return direct
 
             val expanded = expandTile(raw)
             if (expanded.startsWith("/")) {
@@ -202,7 +203,7 @@ class IosMediaPlayer: Player {
 
     private fun stripExtension(filename: String): String {
         val dot = filename.lastIndexOf('.')
-        return if (dot > 0) filename.substring(0, dot) else filename
+        return if (dot > 0) filename.take(dot) else filename
     }
 
     private fun ensureSession() {
