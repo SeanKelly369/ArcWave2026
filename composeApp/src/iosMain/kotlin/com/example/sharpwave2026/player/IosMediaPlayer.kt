@@ -171,21 +171,21 @@ class IosMediaPlayer: Player {
 
     private fun resolveTrackUrl(track: Track): NSURL? {
         val raw = track.uri.trim()
+        if (raw.isBlank()) return null
 
-        if (raw.isNotEmpty()) {
-            //val direct = NSURL(string = raw)
-            //if (direct != null) return direct
-
-            val expanded = expandTile(raw)
-            if (expanded.startsWith("/")) {
-                return NSURL.fileURLWithPath(expanded)
-            }
-
-            val noExt = stripExtension(raw)
-            NSBundle.mainBundle.URLForResource(noExt, withExtension = "mp3")?.let { return it }
-            NSBundle.mainBundle.URLForResource(noExt, withExtension = "m4a")?.let { return it }
-            NSBundle.mainBundle.URLForResource(noExt, withExtension = "wav")?.let { return it }
+        if (raw.startsWith("file://")) {
+            return NSURL.URLWithString(raw)
         }
+
+        val expanded = expandTile(raw)
+        if (expanded.startsWith("/")) {
+            return NSURL.fileURLWithPath(expanded)
+        }
+
+        val noExt = stripExtension(raw)
+        NSBundle.mainBundle.URLForResource(noExt, withExtension = "mp3")?.let { return it }
+        NSBundle.mainBundle.URLForResource(noExt, withExtension = "m4a")?.let { return it }
+        NSBundle.mainBundle.URLForResource(noExt, withExtension = "wav")?.let { return it }
 
         val idNoExt = stripExtension(track.id)
         NSBundle.mainBundle.URLForResource(idNoExt, withExtension = "mp3")?.let { return it }
