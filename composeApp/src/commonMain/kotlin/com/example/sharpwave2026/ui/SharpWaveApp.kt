@@ -73,8 +73,7 @@ fun SharpWaveApp() {
     val pos = state.positionMs.coerceIn(0L, dur)
 
     // 20 minutes in ms
-//    val showArcToggle = dur >= 20L * 60L * 1000L && state.queue.isNotEmpty()
-    val showArcToggle = false
+    val showArcToggle = dur >= 20L * 60L * 1000L && state.queue.isNotEmpty() && state.current != null
 
     var arcMenuOpen by remember { mutableStateOf(false) }
 
@@ -272,10 +271,36 @@ fun SharpWaveApp() {
                     // Menu area that reveals the arc UI
                     AnimatedVisibility(visible = arcMenuOpen) {
                         Column (
-                            modifier = Modifier.fillMaxWidth()
-                            .padding(8.dp)
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(8.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally
                         ) {
-                            Text("Arc UI coming soon!")
+                            ArcSeekBar(
+                                positionMs = dragMs,
+                                durationMs = dur,
+                                diameter = 260.dp,
+                                onScrubStart = { isDragging = true },
+                                onScrub = { ms -> dragMs = ms },
+                                onScrubEnd = { ms ->
+                                    isDragging = false
+                                    player.seekTo(ms)
+                                }
+                            )
+
+                            Spacer(Modifier.height(8.dp))
+
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween
+                            ) {
+                                Text(
+                                    formatMs(dragMs),
+                                    style = MaterialTheme.typography.labelMedium,
+                                    fontFamily = FontFamily.Monospace,
+                                    color = Color(0xFF444444)
+                                )
+                            }
                         }
                     }
                 }
