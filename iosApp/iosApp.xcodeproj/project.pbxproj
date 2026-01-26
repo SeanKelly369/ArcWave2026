@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXFileReference section */
-		7300ECBBCD5E5D1E8BB978B4 /* SharpWave2026.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SharpWave2026.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		7300ECBBCD5E5D1E8BB978B4 /* ArcWave2026.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ArcWave2026.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -50,7 +50,7 @@
 		1C532B720E8E27670F6F592E /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				7300ECBBCD5E5D1E8BB978B4 /* SharpWave2026.app */,
+				7300ECBBCD5E5D1E8BB978B4 /* ArcWave2026.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -87,7 +87,7 @@
 			packageProductDependencies = (
 			);
 			productName = iosApp;
-			productReference = 7300ECBBCD5E5D1E8BB978B4 /* SharpWave2026.app */;
+			productReference = 7300ECBBCD5E5D1E8BB978B4 /* ArcWave2026.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */

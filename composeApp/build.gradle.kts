@@ -47,11 +47,11 @@ kotlin {
 }
 
 android {
-    namespace = "com.example.sharpwave2026"
+    namespace = "com.example.arcwave2026"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
 
     defaultConfig {
-        applicationId = "com.example.sharpwave2026"
+        applicationId = "com.example.arcwave2026"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
         versionCode = 1
@@ -77,4 +77,3 @@ android {
 dependencies {
     debugImplementation(compose.uiTooling)
 }
-

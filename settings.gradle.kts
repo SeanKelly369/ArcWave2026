@@ -1,4 +1,4 @@
-rootProject.name = "SharpWave2026"
+rootProject.name = "ArcWave2026"
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 pluginManagement {
