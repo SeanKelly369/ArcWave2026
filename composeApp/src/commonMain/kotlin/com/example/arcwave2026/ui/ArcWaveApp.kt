@@ -5,7 +5,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.relocation.BringIntoViewRequester
 import androidx.compose.foundation.relocation.bringIntoViewRequester
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -96,92 +95,93 @@ fun ArcWaveApp() {
         return trackUris.mapNotNull { map[it] }
     }
 
-    MaterialTheme {
-        Column(
-            Modifier
-                .fillMaxSize()
-                .padding(WindowInsets.safeDrawing.asPaddingValues())
-                .verticalScroll(scrollState)
-                .padding(8.dp)
-        ) {
-            HeaderTitle(title = "Audio Arc")
-            Spacer(Modifier.height(8.dp))
 
-            LibraryActionsBar(
-                isLoading = isLoading,
-                tracksCount = state.queue.size,
-                canSave = state.queue.isNotEmpty(),
-                onReload = { reloadToken++ },
-                onSaveQueue = { showSaveDialog = true },
-                onJumpToPlaylists = { scope.launch { playlistsBir.bringIntoView() } }
-            )
+    Column(
+        Modifier
+            .fillMaxSize()
+            .padding(WindowInsets.safeDrawing.asPaddingValues())
+            .verticalScroll(scrollState)
+            .padding(8.dp)
+    ) {
+        HeaderTitle(title = "Audio Arc")
+        Spacer(Modifier.height(8.dp))
 
-            LoadErrorText(loadError)
+        LibraryActionsBar(
+            isLoading = isLoading,
+            tracksCount = state.queue.size,
+            canSave = state.queue.isNotEmpty(),
+            onReload = { reloadToken++ },
+            onSaveQueue = { showSaveDialog = true },
+            onJumpToPlaylists = { scope.launch { playlistsBir.bringIntoView() } }
+        )
 
-            SaveQueueDialog(
-                show = showSaveDialog,
-                playlistName = newPlayListName,
-                onPlaylistNameChange = { newPlayListName = it },
-                onDismiss = { showSaveDialog = false },
-                onConfirmSave = {
-                    val uris = state.queue.mapNotNull { t -> t.uri.takeIf { it.isNotBlank() } }
-                    if (uris.isNotEmpty()) {
-                        playListStore.saveQueueAsPlaylist(
-                            name = newPlayListName.ifBlank { "Queue" },
-                            queue = uris
-                        )
-                    }
-                    newPlayListName = ""
-                    showSaveDialog = false
+        LoadErrorText(loadError)
+
+        SaveQueueDialog(
+            show = showSaveDialog,
+            playlistName = newPlayListName,
+            onPlaylistNameChange = { newPlayListName = it },
+            onDismiss = { showSaveDialog = false },
+            onConfirmSave = {
+                val uris = state.queue.mapNotNull { t -> t.uri.takeIf { it.isNotBlank() } }
+                if (uris.isNotEmpty()) {
+                    playListStore.saveQueueAsPlaylist(
+                        name = newPlayListName.ifBlank { "Queue" },
+                        queue = uris
+                    )
                 }
-            )
+                newPlayListName = ""
+                showSaveDialog = false
+            }
+        )
 
-            Spacer(Modifier.height(12.dp))
+        Spacer(Modifier.height(12.dp))
 
-            NowPlayingCard(
-                state = state,
-                durationMs = dur,
-                dragMs = dragMs,
-                onDragMsChange = { dragMs = it },
-                onDraggingChange = { isDragging = it },
-                showArcToggle = showArcToggle,
-                arcMenuOpen = arcMenuOpen,
-                onArcMenuToggle = {
-                    arcMenuOpen = !arcMenuOpen
-                    logd(tag, "Arc menu toggled. arcMenuOpen=$arcMenuOpen showArcToggle=$showArcToggle durMs=$dur")
-                },
-                onPrev = player::prev,
-                onToggle = player::toggle,
-                onNext = player::next,
-                onSeekTo = player::seekTo
-            )
+        NowPlayingCard(
+            state = state,
+            durationMs = dur,
+            positionMs = pos,
+            dragMs = dragMs,
+            onDragMsChange = { dragMs = it },
+            onDraggingChange = { isDragging = it },
+            showArcToggle = showArcToggle,
+            arcMenuOpen = arcMenuOpen,
+            onArcMenuToggle = {
+                arcMenuOpen = !arcMenuOpen
+                logd(tag, "Arc menu toggled. arcMenuOpen=$arcMenuOpen showArcToggle=$showArcToggle durMs=$dur")
+            },
+            onPrev = player::prev,
+            onToggle = player::toggle,
+            onNext = player::next,
+            onSeekTo = player::seekTo
+        )
 
-            Spacer(Modifier.height(16.dp))
+        Spacer(Modifier.height(16.dp))
 
-            PlaylistsSection(
-                modifier = Modifier.bringIntoViewRequester(playlistsBir),
-                playlists = playlists,
-                onDelete = { id -> playListStore.delete(id) },
-                onPlaylistClick = { pl ->
-                    val tracks = resolveTracksByUri(pl.trackUris, allTracks)
-                    if (tracks.isNotEmpty()) {
-                        player.setQueue(tracks, startIndex = 0)
-                        player.play()
-                    }
-                }
-            )
-
-            Spacer(Modifier.height(16.dp))
-
-            QueueSection(
-                queue = state.queue,
-                currentIndex = state.index,
-                isPlaying = state.isPlaying,
-                onTapTrack = { idx ->
-                    player.setQueue(state.queue, idx)
+        PlaylistsSection(
+            modifier = Modifier.bringIntoViewRequester(playlistsBir),
+            playlists = playlists,
+            onDelete = { id -> playListStore.delete(id) },
+            onPlaylistClick = { pl ->
+                val tracks = resolveTracksByUri(pl.trackUris, allTracks)
+                if (tracks.isNotEmpty()) {
+                    player.setQueue(tracks, startIndex = 0)
                     player.play()
                 }
-            )
-        }
+            }
+        )
+
+        Spacer(Modifier.height(16.dp))
+
+        QueueSection(
+            queue = state.queue,
+            currentIndex = state.index,
+            isPlaying = state.isPlaying,
+            onTapTrack = { idx ->
+                player.setQueue(state.queue, idx)
+                player.play()
+            }
+        )
+
     }
 }

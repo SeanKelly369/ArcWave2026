@@ -78,7 +78,7 @@ fun ArcSeekBar(
     Canvas(
         modifier = modifier
             .size(diameter)
-            .pointerInput(durationMs) {
+            .pointerInput(dur) {
                 detectDragGestures(
                     onDragStart = { onScrubStart() },
                     onDragEnd = { onScrubEnd(lastScrubMs.coerceIn(0L, dur)) },

@@ -7,6 +7,8 @@ import arcwave2026.composeapp.generated.resources.Res
 import arcwave2026.composeapp.generated.resources.open_close_arrow
 import arcwave2026.composeapp.generated.resources.pause
 import arcwave2026.composeapp.generated.resources.play
+import arcwave2026.composeapp.generated.resources.repeat
+import arcwave2026.composeapp.generated.resources.shuffle
 import arcwave2026.composeapp.generated.resources.skip
 
 @Composable
