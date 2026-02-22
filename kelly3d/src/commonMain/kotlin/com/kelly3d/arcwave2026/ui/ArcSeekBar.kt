@@ -2,6 +2,7 @@ package com.kelly3d.arcwave2026.ui
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.detectDragGestures
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -34,11 +35,16 @@ fun ArcSeekBar(
     fun radToDeg(r: Float): Float = r * (180f / PI.toFloat())
     fun degToRad(d: Float): Float = d * (PI.toFloat() / 180f)
 
-    // remember last scrubbed value so drag end returns the right ms
+    var isScrubbing by remember { mutableStateOf(false) }
+
     var lastScrubMs by remember { mutableStateOf(positionMs.coerceIn(0L, dur)) }
-    LaunchedEffect(positionMs, dur) {
-        // keep it in sync when not dragging externally
-        lastScrubMs = positionMs.coerceIn(0L, dur)
+
+    val latestOnScrubStart by rememberUpdatedState(onScrubStart)
+    val latestOnScrub by rememberUpdatedState(onScrub)
+    val latestOnScrubEnd by rememberUpdatedState(onScrubEnd)
+
+    LaunchedEffect(positionMs, dur, isScrubbing) {
+        if (!isScrubbing) lastScrubMs = positionMs.coerceIn(0L, dur)
     }
 
     fun pointToFrac(center: Offset, p: Offset): Float {
@@ -68,7 +74,6 @@ fun ArcSeekBar(
             if (circDist(ang, start) < circDist(ang, end)) start else end
         } else ang
 
-        // IMPORTANT: subtract normalized start and fix negative modulo
         var delta = (clampedAng - start + 360f) % 360f
         delta = delta.coerceIn(0f, sweepAngleDeg)
 
@@ -78,17 +83,53 @@ fun ArcSeekBar(
     Canvas(
         modifier = modifier
             .size(diameter)
+
+            // Tap-to-seek
+            .pointerInput(dur) {
+                detectTapGestures { tap ->
+                    val center = Offset(size.width / 2f, size.height / 2f)
+                    val f = pointToFrac(center, tap)
+                    val ms = (f * dur).toLong().coerceIn(0L, dur)
+
+                    isScrubbing = true
+                    lastScrubMs = ms
+
+                    latestOnScrubStart()
+                    latestOnScrub(ms)
+                    latestOnScrubEnd(ms)
+
+                    isScrubbing = false
+                }
+            }
+            // Drag-to-seek
             .pointerInput(dur) {
                 detectDragGestures(
-                    onDragStart = { onScrubStart() },
-                    onDragEnd = { onScrubEnd(lastScrubMs.coerceIn(0L, dur)) },
-                    onDragCancel = { onScrubEnd(lastScrubMs.coerceIn(0L, dur)) },
+                    onDragStart = { startPos ->
+                        isScrubbing = true
+                        latestOnScrubStart()
+
+                        val center = Offset(size.width / 2f, size.height / 2f)
+                        val f = pointToFrac(center, startPos)
+                        val ms = (f * dur).toLong().coerceIn(0L, dur)
+
+                        lastScrubMs = ms
+                        latestOnScrub(ms)
+                    },
+                    onDragEnd = {
+                        latestOnScrubEnd(lastScrubMs.coerceIn(0L, dur))
+                        isScrubbing = false
+                    },
+                    onDragCancel = {
+                        latestOnScrubEnd(lastScrubMs.coerceIn(0L, dur))
+                        isScrubbing = false
+                    },
                     onDrag = { change, _ ->
-                        val center = Offset(diameter.toPx() / 2f, diameter.toPx() / 2f)
+                        val center = Offset(size.width / 2f, size.height / 2f)
                         val f = pointToFrac(center, change.position)
                         val ms = (f * dur).toLong().coerceIn(0L, dur)
+
                         lastScrubMs = ms
-                        onScrub(ms)
+                        latestOnScrub(ms)
                     }
                 )
             }
