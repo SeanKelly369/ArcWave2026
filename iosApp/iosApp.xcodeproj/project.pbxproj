@@ -11,7 +11,7 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		A6ED3E32F15148D0017F005B /* Exceptions for "iosApp" folder in "iosApp" target */ = {
+		A6ED3E32F15148D0017F005B /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
@@ -24,7 +24,7 @@
 		CA46E567E03713D95279258F /* iosApp */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				A6ED3E32F15148D0017F005B /* Exceptions for "iosApp" folder in "iosApp" target */,
+				A6ED3E32F15148D0017F005B /* PBXFileSystemSynchronizedBuildFileExceptionSet */,
 			);
 			path = iosApp;
 			sourceTree = "<group>";
@@ -71,6 +71,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = C3341739BA885E5FE0EBC427 /* Build configuration list for PBXNativeTarget "iosApp" */;
 			buildPhases = (
+				63997AB138C894EE6A9A1190 /* Compile Kotlin */,
 				99809033F8D861EBA157C24C /* Compile Kotlin Framework */,
 				260D58DCA28344192B614380 /* Sources */,
 				BC5439CFACA979B26BFEFAE2 /* Frameworks */,
@@ -135,6 +136,16 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		63997AB138C894EE6A9A1190 /* Compile Kotlin */ = {
+			isa = PBXShellScriptBuildPhase;
+			inputPaths = (
+			);
+			name = "Compile Kotlin";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellScript = "if [ \"YES\" = \"$OVERRIDE_KOTLIN_BUILD_IDE_SUPPORTED\" ]; then\n  echo \"Skipping Gradle build task invocation due to OVERRIDE_KOTLIN_BUILD_IDE_SUPPORTED environment variable set to \\\"YES\\\"\"\n  exit 0\nfi\ncd \"$SRCROOT/..\"\n./gradlew :kelly3d:embedAndSignAppleFrameworkForXcode";
+		};
 		99809033F8D861EBA157C24C /* Compile Kotlin Framework */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;

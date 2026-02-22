@@ -1,6 +1,6 @@
 import UIKit
 import SwiftUI
-import ComposeApp
+import kelly3d
 
 final class ComposeVCStore: ObservableObject {
     let vc: UIViewController = MainViewControllerKt.MainViewController()
