@@ -39,6 +39,8 @@ fun ArcWaveApp() {
 
 @Composable
 private fun ArcWaveContent() {
+    var pendingSeekMs by remember { mutableStateOf<Long?>(null) }
+
     val player = providePlayer()
     val state by player.state.collectAsState(PlayerState())
     val library = provideAudioLibrary()
@@ -104,8 +106,20 @@ private fun ArcWaveContent() {
         logd(tag, "Track change -> arcMenuOpen=false; uri=${cur?.uri} title=${cur?.title} index=${state.index}/${state.queue.size}")
     }
 
-    LaunchedEffect(pos, dur, isDragging) {
-        if (!isDragging) dragMs = pos
+    LaunchedEffect(pos, dur, isDragging, pendingSeekMs) {
+        if (!isDragging) {
+            val pending = pendingSeekMs
+            if (pending == null) {
+                dragMs = pos
+            } else {
+                if (kotlin.math.abs(pos - pending) <= 750L) {
+                    pendingSeekMs = null
+                    dragMs = pos
+                } else {
+                    dragMs = pending.coerceIn(0L, dur)
+                }
+            }
+        }
     }
 
     fun resolveTracksByUri(trackUris: List<String>, all: List<Track>): List<Track> {
@@ -171,7 +185,12 @@ private fun ArcWaveContent() {
             onPrev = player::prev,
             onToggle = player::toggle,
             onNext = player::next,
-            onSeekTo = player::seekTo
+            onSeekTo = { ms ->
+                val target = ms.coerceIn(0L, dur)
+                pendingSeekMs = target
+                dragMs = target
+                player.seekTo(target)
+            }
         )
 
         Spacer(Modifier.height(16.dp))

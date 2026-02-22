@@ -18,6 +18,7 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -93,15 +94,29 @@ fun NowPlayingCard (
                 ) { Text("Next") }
             }
 
+            var isLinearScrubbing by remember { mutableStateOf(false) }
+            var linearDragMs by remember { mutableStateOf(dragMs) }
+
+            LaunchedEffect(dragMs, isLinearScrubbing) {
+                if (!isLinearScrubbing) linearDragMs = dragMs
+            }
+
             Slider(
-                value = dragMs.toFloat() / durationMs.toFloat(),
+                value = (linearDragMs.toFloat() / durationMs.toFloat()).coerceIn(0f, 1f),
                 onValueChange = { frac ->
+                    isLinearScrubbing = true
                     onDraggingChange(true)
+
+                    val ms = (frac * durationMs).toLong().coerceIn(0L, durationMs)
+                    linearDragMs = ms
                     onDragMsChange((frac * durationMs).toLong())
                 },
                 onValueChangeFinished = {
+                    // use the local value, not the (possibly stale) parameter
+                    val ms = linearDragMs.coerceIn(0L, durationMs)
+                    isLinearScrubbing = false
                     onDraggingChange(false)
-                    onSeekTo(dragMs)
+                    onSeekTo(ms)
                 },
                 enabled = state.queue.isNotEmpty() && durationMs > 1L,
                 modifier = Modifier.fillMaxWidth()
@@ -142,32 +157,27 @@ fun NowPlayingCard (
                 }
 
                 AnimatedVisibility(visible = arcMenuOpen) {
-
                     val windowMs = 8L * 60L * 1000L
 
                     var isArcScrubbing by remember { mutableStateOf(false) }
                     var frozenWindowStart by remember { mutableStateOf(0L) }
                     var frozenWindowEnd by remember { mutableStateOf(0L) }
+                    var scrubBaseStart by remember { mutableStateOf(0L) }
 
-                    val anchorMs = if (isArcScrubbing) dragMs else positionMs
+                    val displayMs = if (isLinearScrubbing) linearDragMs else dragMs
 
-                    val (autoStart, autoEnd) = remember(anchorMs, durationMs) {
-                        computeSeekWindow(anchorMs, durationMs, windowMs)
-                    }
+                    val (autoStart, autoEnd) = computeSeekWindow(displayMs, durationMs, windowMs)
 
                     val startAbs = if (isArcScrubbing) frozenWindowStart else autoStart
                     val endAbs = if (isArcScrubbing) frozenWindowEnd else autoEnd
 
                     val windowLen = (endAbs - startAbs).coerceAtLeast(1L)
-                    val localPos = (dragMs - startAbs).coerceIn(0L, windowLen)
+                    val localPos = (displayMs - startAbs).coerceIn(0L, windowLen)
 
                     Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(8.dp),
+                        modifier = Modifier.fillMaxWidth().padding(8.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-
                         ArcSeekBar(
                             positionMs = localPos,
                             durationMs = windowLen,
@@ -179,16 +189,19 @@ fun NowPlayingCard (
                                 val (s, e) = computeSeekWindow(dragMs, durationMs, windowMs)
                                 frozenWindowStart = s
                                 frozenWindowEnd = e
+                                scrubBaseStart = s
                             },
                             onScrub = { localMs ->
-                                val absolute = (startAbs + localMs).coerceIn(0L, durationMs)
+                                val absolute = (scrubBaseStart + localMs).coerceIn(0L, durationMs)
                                 onDragMsChange(absolute)
                             },
                             onScrubEnd = { localMs ->
-                                val absolute = (startAbs + localMs).coerceIn(0L, durationMs)
+                                val absolute = (scrubBaseStart + localMs).coerceIn(0L, durationMs)
+
+                                onDragMsChange(absolute)
+                                onSeekTo(absolute)
                                 isArcScrubbing = false
                                 onDraggingChange(false)
-                                onSeekTo(absolute)
                             }
                         )
 
@@ -201,7 +214,6 @@ fun NowPlayingCard (
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
-
                 }
             }
         }
