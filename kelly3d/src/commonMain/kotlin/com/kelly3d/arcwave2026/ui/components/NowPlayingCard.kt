@@ -18,6 +18,7 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -93,15 +94,29 @@ fun NowPlayingCard (
                 ) { Text("Next") }
             }
 
+            var isLinearScrubbing by remember { mutableStateOf(false) }
+            var linearDragMs by remember { mutableStateOf(dragMs) }
+
+            LaunchedEffect(dragMs, isLinearScrubbing) {
+                if (!isLinearScrubbing) linearDragMs = dragMs
+            }
+
             Slider(
-                value = dragMs.toFloat() / durationMs.toFloat(),
+                value = (linearDragMs.toFloat() / durationMs.toFloat()).coerceIn(0f, 1f),
                 onValueChange = { frac ->
+                    isLinearScrubbing = true
                     onDraggingChange(true)
+
+                    val ms = (frac * durationMs).toLong().coerceIn(0L, durationMs)
+                    linearDragMs = ms
                     onDragMsChange((frac * durationMs).toLong())
                 },
                 onValueChangeFinished = {
+                    // use the local value, not the (possibly stale) parameter
+                    val ms = linearDragMs.coerceIn(0L, durationMs)
+                    isLinearScrubbing = false
                     onDraggingChange(false)
-                    onSeekTo(dragMs)
+                    onSeekTo(ms)
                 },
                 enabled = state.queue.isNotEmpty() && durationMs > 1L,
                 modifier = Modifier.fillMaxWidth()
