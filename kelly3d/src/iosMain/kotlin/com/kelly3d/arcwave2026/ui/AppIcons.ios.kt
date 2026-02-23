@@ -2,13 +2,13 @@ package com.kelly3d.arcwave2026.ui
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.painter.Painter
-import arcwave2026.kelly3d.generated.resources.Res
-import arcwave2026.kelly3d.generated.resources.open_close_arrow
-import arcwave2026.kelly3d.generated.resources.pause
-import arcwave2026.kelly3d.generated.resources.play
-import arcwave2026.kelly3d.generated.resources.repeat
-import arcwave2026.kelly3d.generated.resources.skip
-import arcwave2026.kelly3d.generated.resources.shuffle
+import arcwave.kelly3d.generated.resources.Res
+import arcwave.kelly3d.generated.resources.open_close_arrow
+import arcwave.kelly3d.generated.resources.pause
+import arcwave.kelly3d.generated.resources.play
+import arcwave.kelly3d.generated.resources.repeat
+import arcwave.kelly3d.generated.resources.skip
+import arcwave.kelly3d.generated.resources.shuffle
 import org.jetbrains.compose.resources.painterResource
 
 @Composable
