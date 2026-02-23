@@ -1,4 +1,4 @@
-rootProject.name = "ArcWave2026"
+rootProject.name = "ArcWave"
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 pluginManagement {

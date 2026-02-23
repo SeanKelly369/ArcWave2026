@@ -7,7 +7,7 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 
-private val Emerald = Color(0xFF053833)
+private val Primary_Red = Color(0xFFE23617)
 private val Copper = Color(0xFFA16B2A)
 private val Gold = Color(0xFFDAB331)
 
@@ -16,7 +16,7 @@ private val DarkBg = Color(0xFF0A100F)
 private val DarkSurface = Color(0xFF0A0E0C)
 
 private val LightScheme = lightColorScheme(
-    primary = Emerald,
+    primary = Primary_Red,
     onPrimary = Color.White,
     secondary = Copper,
     onSecondary = Color(0xFF111311),
@@ -31,7 +31,7 @@ private val LightScheme = lightColorScheme(
 )
 
 private val DarkScheme = darkColorScheme(
-    primary = Emerald,
+    primary = Primary_Red,
     onPrimary = Color(0xFFE9EEE8),
     secondary = Copper,
     onSecondary = Color(0xFF111311),
