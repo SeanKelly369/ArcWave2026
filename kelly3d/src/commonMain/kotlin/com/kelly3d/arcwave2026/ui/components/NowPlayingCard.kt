@@ -40,7 +40,6 @@ import com.kelly3d.arcwave2026.ui.ArcSeekBar
 fun NowPlayingCard (
     state: PlayerState,
     durationMs: Long,
-    positionMs: Long,
     dragMs: Long,
     onDragMsChange: (Long) -> Unit,
     onDraggingChange: (Boolean) -> Unit,

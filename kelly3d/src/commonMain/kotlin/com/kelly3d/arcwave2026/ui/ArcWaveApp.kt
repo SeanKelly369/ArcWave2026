@@ -172,7 +172,6 @@ private fun ArcWaveContent() {
         NowPlayingCard(
             state = state,
             durationMs = dur,
-            positionMs = pos,
             dragMs = dragMs,
             onDragMsChange = { dragMs = it },
             onDraggingChange = { isDragging = it },
