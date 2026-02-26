@@ -2,13 +2,13 @@ package com.kelly3d.arcwave2026.ui.components
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
@@ -32,9 +32,10 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.kelly3d.arcwave2026.player.PlayerState
 import com.kelly3d.arcwave2026.ui.AppIcon
-import com.kelly3d.arcwave2026.ui.appIconPainter
-import com.kelly3d.arcwave2026.utils.formatMs
 import com.kelly3d.arcwave2026.ui.ArcSeekBar
+import com.kelly3d.arcwave2026.ui.appIconPainter
+import com.kelly3d.arcwave2026.ui.iconSize
+import com.kelly3d.arcwave2026.utils.formatMs
 
 @Composable
 fun NowPlayingCard (
@@ -73,23 +74,30 @@ fun NowPlayingCard (
 
             Spacer(Modifier.height(12.dp))
 
-            Box(modifier = Modifier.fillMaxWidth()) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
                 OutlinedButton(
                     onClick = onPrev,
                     enabled = state.queue.isNotEmpty(),
-                    modifier = Modifier.align(Alignment.CenterStart)
                 ) { Text("Prev") }
 
                 Button(
                     onClick = onToggle,
                     enabled = state.queue.isNotEmpty(),
-                    modifier = Modifier.align ( Alignment.Center ),
-                ) { Text(if (state.isPlaying) "Pause" else "Play") }
+                ) {
+                    Icon(
+                        painter = appIconPainter(if (state.isPlaying) AppIcon.Pause else AppIcon.Play),
+                        contentDescription = if (state.isPlaying) "Pause" else "Play",
+                        modifier = Modifier.size(iconSize)
+                    )
+                }
 
                 OutlinedButton(
                     onClick = onNext,
                     enabled = state.queue.isNotEmpty(),
-                    modifier = Modifier.align(Alignment.CenterEnd)
                 ) { Text("Next") }
             }
 

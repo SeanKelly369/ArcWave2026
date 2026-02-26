@@ -3,6 +3,7 @@ package com.kelly3d.arcwave2026.ui
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
 import com.kelly3d.arcwave2026.R
 
 @Composable
@@ -18,3 +19,5 @@ actual fun appIconPainter(icon: AppIcon): Painter {
     }
     return painterResource(resId)
 }
+
+actual val iconSize = 24.dp
