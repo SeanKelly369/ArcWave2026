@@ -26,4 +26,4 @@ actual fun appIconPainter(icon: AppIcon): Painter {
     return painterResource(res)
 }
 
-actual val iconSize = 16.dp
+actual val iconSize = 12.dp
