@@ -1,5 +1,6 @@
 package com.kelly3d.arcwave2026.ui.components
 
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -14,7 +15,7 @@ fun HeaderTitle(
     Text(
         text = title,
         style = MaterialTheme.typography.headlineSmall,
-        modifier = modifier,
+        modifier = modifier.fillMaxWidth(),
         textAlign = TextAlign.Center
     )
 }

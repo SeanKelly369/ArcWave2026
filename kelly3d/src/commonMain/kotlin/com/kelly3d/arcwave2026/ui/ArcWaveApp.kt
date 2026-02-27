@@ -1,5 +1,6 @@
 package com.kelly3d.arcwave2026.ui
 
+import androidx.compose.foundation.gestures.snapping.SnapPosition
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -22,6 +23,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.ui.Alignment
 
 @Composable
 fun ArcWaveApp() {
@@ -29,7 +31,10 @@ fun ArcWaveApp() {
         onGranted = { ArcWaveContent() },
         onDenied = {
             Column(Modifier.fillMaxSize().padding(16.dp)) {
-                HeaderTitle(title = "Audio Arc")
+                HeaderTitle(
+                    title = "Arc Wave",
+                    modifier = Modifier.fillMaxWidth()
+                )
                 Spacer(Modifier.height(8.dp))
                 LoadErrorText("Storage/media permission is required to scan audio files.")
             }
@@ -135,7 +140,7 @@ private fun ArcWaveContent() {
             .verticalScroll(scrollState)
             .padding(8.dp)
     ) {
-        HeaderTitle(title = "Audio Arc")
+        HeaderTitle(title = "Arc Wave")
         Spacer(Modifier.height(8.dp))
 
         LibraryActionsBar(
