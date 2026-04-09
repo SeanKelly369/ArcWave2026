@@ -4,12 +4,11 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
+import com.kelly3d.arcwave2026.library.LibraryActionButtonsRow
 
 @Composable
 fun LibraryActionsBar(
@@ -31,10 +30,19 @@ fun LibraryActionsBar(
             style = MaterialTheme.typography.bodyMedium
         )
 
-        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            OutlinedButton(onClick = onReload) { Text("Reload") }
-            OutlinedButton(onClick = onSaveQueue, enabled = canSave) { Text("Save queue") }
-            OutlinedButton(onClick = onJumpToPlaylists) { Text("Playlists") }
-        }
+    }
+
+    Row(
+        modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+
+        LibraryActionButtonsRow(
+            canSave = canSave,
+            onReload = onReload,
+            onSaveQueue = onSaveQueue,
+            onJumpToPlaylists = onJumpToPlaylists
+        )
     }
 }
