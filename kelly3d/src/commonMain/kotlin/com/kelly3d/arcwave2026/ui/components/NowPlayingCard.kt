@@ -26,8 +26,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -83,11 +83,13 @@ fun NowPlayingCard (
                 OutlinedButton(
                     onClick = onPrev,
                     enabled = state.queue.isNotEmpty(),
-                ) { 
+                ) {
                     Icon(
                         painter = appIconPainter(AppIcon.Prev),
                         contentDescription = "Previous",
-                        modifier = Modifier.size(iconSize)
+                        modifier = Modifier
+                            .size(iconSize)
+                            .rotate(180f)
                     )
                 }
 
@@ -109,7 +111,7 @@ fun NowPlayingCard (
                     Icon(
                         painter = appIconPainter(AppIcon.Next),
                         contentDescription = "Next",
-                        modifier = Modifier.size(iconSize).scale(scaleX = -1f, scaleY = 1f)
+                        modifier = Modifier.size(iconSize)
                     )
                 }
             }

@@ -35,7 +35,7 @@ fun LibraryActionsBar(
     Row(
         modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween
+        horizontalArrangement = Arrangement.Center
     ) {
 
         LibraryActionButtonsRow(

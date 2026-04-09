@@ -21,8 +21,8 @@ actual fun appIconPainter(icon: AppIcon): Painter {
         AppIcon.OpenCloseArrow -> Res.drawable.open_close_arrow
         AppIcon.Play -> Res.drawable.play
         AppIcon.Pause -> Res.drawable.pause
-        AppIcon.Next -> Res.drawable.skip
         AppIcon.Prev -> Res.drawable.skip
+        AppIcon.Next -> Res.drawable.skip
         AppIcon.Shuffle -> Res.drawable.shuffle
         AppIcon.Repeat -> Res.drawable.repeat
         AppIcon.TopRowReload -> Res.drawable.ic_top_row_reload
