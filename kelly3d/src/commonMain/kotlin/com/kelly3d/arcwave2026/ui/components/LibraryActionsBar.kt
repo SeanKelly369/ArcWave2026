@@ -22,9 +22,9 @@ fun LibraryActionsBar(
     modifier: Modifier = Modifier
 ) {
     Row(
-        modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween
+        horizontalArrangement = Arrangement.Center
     ) {
         Text(
             if (isLoading) "Scanning…" else "Tracks: $tracksCount",
