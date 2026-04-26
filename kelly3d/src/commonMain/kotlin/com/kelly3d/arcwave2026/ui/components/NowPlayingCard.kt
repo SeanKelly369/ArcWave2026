@@ -112,7 +112,9 @@ fun NowPlayingCard (
                     Icon(
                         painter = appIconPainter(AppIcon.Prev),
                         contentDescription = "Previous",
-                        modifier = Modifier.size(iconSize)
+                        modifier = Modifier
+                            .size(iconSize)
+                            .rotate(180f)
                     )
                 }
 
@@ -134,7 +136,7 @@ fun NowPlayingCard (
                     Icon(
                         painter = appIconPainter(AppIcon.Next),
                         contentDescription = "Next",
-                        modifier = Modifier.size(iconSize).scale(scaleX = -1f, scaleY = 1f)
+                        modifier = Modifier.size(iconSize)
                     )
                 }
             }

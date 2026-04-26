@@ -11,7 +11,7 @@ private val Primary_Red = Color(0xFFE23617)
 private val Copper = Color(0xFFA16B2A)
 private val Gold = Color(0xFFDAB331)
 
-private val Paper = Color(0xFFC5DCE4)
+private val Paper = Color.White
 private val DarkBg = Color(0xFF0A100F)
 private val DarkSurface = Color(0xFF0A0E0C)
 

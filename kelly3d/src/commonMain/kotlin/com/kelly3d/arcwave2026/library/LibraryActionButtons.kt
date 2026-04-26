@@ -78,25 +78,25 @@ private fun LibraryActionButton(
 
     val backgroundColour by animateColorAsState(
         targetValue = when {
-            !enabled -> MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.38f)
-            isPressed -> MaterialTheme.colorScheme.surfaceVariant
-            else -> MaterialTheme.colorScheme.surface
+            !enabled -> Color(0xFFF4F4F6)
+            isPressed -> Color(0xFFECE8F1)
+            else -> Color(0xFFF9F8FB)
         },
         label = "libraryActionBackground"
     )
 
     val borderColour by animateColorAsState(
         targetValue = when {
-            !enabled -> MaterialTheme.colorScheme.outline.copy(alpha = 0.38f)
-            isPressed -> MaterialTheme.colorScheme.primary
-            else -> MaterialTheme.colorScheme.outline
+            !enabled -> Color(0xFFD8D6DC)
+            isPressed -> Color(0xFFC8C2D1)
+            else -> Color(0xFFD9D4E0)
         },
         label = "libraryActionBorder"
     )
 
     val contentColour by animateColorAsState(
         targetValue = when {
-            !enabled -> MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
+            !enabled -> Color(0xFFAAA7B0)
             else -> MaterialTheme.colorScheme.onSurface
         },
         label = "libraryActionContent"
@@ -118,14 +118,15 @@ private fun LibraryActionButton(
         interactionSource = interactionSource,
         shape = RoundedCornerShape(18.dp),
         border = BorderStroke(1.dp, borderColour),
-        contentPadding = PaddingValues(horizontal = 14.dp, vertical = 10.dp),
+        contentPadding = PaddingValues(horizontal = 10.dp, vertical = 6.dp),
         colors = ButtonDefaults.outlinedButtonColors(
             containerColor = backgroundColour,
             contentColor = contentColour,
-            disabledContainerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.38f),
-            disabledContentColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
+            disabledContainerColor = Color(0xFFF4F4F6),
+            disabledContentColor = Color(0xFFAAA7B0)
         ),
         modifier = modifier
+            .padding(horizontal = 16.dp)
             .defaultMinSize(minHeight = 42.dp)
             .scale(scale)
             .offset(y = offsetY)
@@ -140,7 +141,7 @@ private fun LibraryActionButton(
         Text(
             text = text,
             style = MaterialTheme.typography.labelLarge,
-            modifier = Modifier.padding(start = 8.dp)
+            modifier = Modifier.padding(start = 4.dp)
         )
     }
 }
