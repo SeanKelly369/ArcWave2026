@@ -28,7 +28,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.scale
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
@@ -182,7 +181,7 @@ fun NowPlayingCard (
                 Text(
                     formatMs(durationMs),
                     style = MaterialTheme.typography.labelMedium,
-                    color = Color(0xFF444444)
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
 

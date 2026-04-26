@@ -78,25 +78,25 @@ private fun LibraryActionButton(
 
     val backgroundColour by animateColorAsState(
         targetValue = when {
-            !enabled -> Color(0xFFF4F4F6)
-            isPressed -> Color(0xFFECE8F1)
-            else -> Color(0xFFF9F8FB)
+            !enabled -> MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.38f)
+            isPressed -> MaterialTheme.colorScheme.surfaceVariant
+            else -> MaterialTheme.colorScheme.surface
         },
         label = "libraryActionBackground"
     )
 
     val borderColour by animateColorAsState(
         targetValue = when {
-            !enabled -> Color(0xFFD8D6DC)
-            isPressed -> Color(0xFFC8C2D1)
-            else -> Color(0xFFD9D4E0)
+            !enabled -> MaterialTheme.colorScheme.outline.copy(alpha = 0.38f)
+            isPressed -> MaterialTheme.colorScheme.primary
+            else -> MaterialTheme.colorScheme.outline
         },
         label = "libraryActionBorder"
     )
 
     val contentColour by animateColorAsState(
         targetValue = when {
-            !enabled -> Color(0xFFAAA7B0)
+            !enabled -> MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
             else -> MaterialTheme.colorScheme.onSurface
         },
         label = "libraryActionContent"
@@ -122,8 +122,8 @@ private fun LibraryActionButton(
         colors = ButtonDefaults.outlinedButtonColors(
             containerColor = backgroundColour,
             contentColor = contentColour,
-            disabledContainerColor = Color(0xFFF4F4F6),
-            disabledContentColor = Color(0xFFAAA7B0)
+            disabledContainerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.38f),
+            disabledContentColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
         ),
         modifier = modifier
             .defaultMinSize(minHeight = 42.dp)

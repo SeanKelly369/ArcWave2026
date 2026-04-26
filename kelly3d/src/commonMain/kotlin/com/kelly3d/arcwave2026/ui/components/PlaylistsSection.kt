@@ -11,7 +11,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.kelly3d.arcwave2026.library.PlayList
 
@@ -30,7 +29,7 @@ fun PlaylistsSection(
     Spacer(Modifier.height(8.dp))
 
     if (playlists.isEmpty()) {
-        Text("No playlists yet.", style = MaterialTheme.typography.bodySmall, color = Color(0xFF444444))
+        Text("No playlists yet.", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
         return
     }
 

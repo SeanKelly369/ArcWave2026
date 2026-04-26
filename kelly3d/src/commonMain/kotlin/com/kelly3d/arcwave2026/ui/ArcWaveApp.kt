@@ -9,6 +9,8 @@ import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.compose.material3.Surface
+import androidx.compose.material3.MaterialTheme
 import com.kelly3d.arcwave2026.library.PlayListStore
 import com.kelly3d.arcwave2026.library.provideAudioLibrary
 import com.kelly3d.arcwave2026.player.PlayerState
@@ -27,19 +29,24 @@ import androidx.compose.ui.Alignment
 
 @Composable
 fun ArcWaveApp() {
-    AudioPermissionGate(
-        onGranted = { ArcWaveContent() },
-        onDenied = {
-            Column(Modifier.fillMaxSize().padding(16.dp)) {
-                HeaderTitle(
-                    title = "Arc Wave",
-                    modifier = Modifier.fillMaxWidth()
-                )
-                Spacer(Modifier.height(8.dp))
-                LoadErrorText("Storage/media permission is required to scan audio files.")
+    Surface(
+        modifier = Modifier.fillMaxSize(),
+        color = MaterialTheme.colorScheme.background
+    ) {
+        AudioPermissionGate(
+            onGranted = { ArcWaveContent() },
+            onDenied = {
+                Column(Modifier.fillMaxSize().padding(16.dp)) {
+                    HeaderTitle(
+                        title = "Arc Wave",
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    Spacer(Modifier.height(8.dp))
+                    LoadErrorText("Storage/media permission is required to scan audio files.")
+                }
             }
-        }
-    )
+        )
+    }
 }
 
 @Composable

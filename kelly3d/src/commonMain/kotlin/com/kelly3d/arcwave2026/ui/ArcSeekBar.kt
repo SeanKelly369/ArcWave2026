@@ -4,6 +4,7 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -80,6 +81,8 @@ fun ArcSeekBar(
         return (delta / sweepAngleDeg).coerceIn(0f, 1f)
     }
 
+    val onSurfaceColor = MaterialTheme.colorScheme.onSurface
+
     Canvas(
         modifier = modifier
             .size(diameter)
@@ -141,7 +144,7 @@ fun ArcSeekBar(
 
         // background arc
         drawArc(
-            color = Color(0x22000000),
+            color = onSurfaceColor.copy(alpha = 0.12f),
             startAngle = startAngleDeg,
             sweepAngle = sweepAngleDeg,
             useCenter = false,
