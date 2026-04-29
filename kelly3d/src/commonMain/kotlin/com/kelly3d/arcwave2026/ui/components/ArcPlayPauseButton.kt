@@ -39,9 +39,9 @@ fun ArcPlayPauseButton(
     enabled: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    width: Dp = 88.dp,
-    height: Dp = 54.dp,
-    iconSize: Dp = 30.dp
+    width: Dp = 76.dp,
+    height: Dp = 46.dp,
+    iconSize: Dp = 40.dp
 ) {
     val colours = arcPlayPauseColours()
     val shape = RoundedCornerShape(999.dp)
@@ -60,7 +60,7 @@ fun ArcPlayPauseButton(
     )
 
     val rimPadding by animateDpAsState(
-        targetValue = if (isPressed) 5.dp else 6.dp,
+        targetValue = if (isPressed) 1.dp else 2.dp,
         label = "arcPlayPauseRim"
     )
 
@@ -106,7 +106,7 @@ fun ArcPlayPauseButton(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .fillMaxHeight(0.42f)
+                    .fillMaxHeight(0.34f)
                     .align(Alignment.TopCenter)
                     .clip(
                         RoundedCornerShape(
@@ -162,17 +162,22 @@ private fun Modifier.backgroundBody(
 ): Modifier {
     return background(
         brush = Brush.verticalGradient(
-            colors = if (isPressed) {
-                listOf(
-                    colours.bodyTopPressed,
-                    colours.bodyMiddlePressed,
-                    colours.bodyBottomPressed
+            colorStops = if (isPressed) {
+                arrayOf(
+                    0.00f to colours.bodyPressed1,
+                    0.08f to colours.bodyPressed2,
+                    0.22f to colours.bodyPressed3,
+
                 )
             } else {
-                listOf(
-                    colours.bodyTop,
-                    colours.bodyMiddle,
-                    colours.bodyBottom
+                arrayOf(
+                    0.00f to colours.body1,
+                    0.08f to colours.body2,
+                    0.22f to colours.body3,
+                    0.41f to colours.body4,
+                    0.81f to colours.body5,
+                    0.92f to colours.body6,
+                    1f to colours.body7
                 )
             }
         )

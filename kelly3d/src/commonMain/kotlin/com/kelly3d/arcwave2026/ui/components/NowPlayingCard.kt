@@ -121,9 +121,9 @@ fun NowPlayingCard (
                     isPlaying = state.isPlaying,
                     enabled = state.queue.isNotEmpty(),
                     onClick = onToggle,
-                    width = 104.dp,
-                    height = 58.dp,
-                    iconSize = 32.dp
+                    width = 88.dp,
+                    height = 48.dp,
+                    iconSize = 40.dp
                 )
 
                 OutlinedButton(
