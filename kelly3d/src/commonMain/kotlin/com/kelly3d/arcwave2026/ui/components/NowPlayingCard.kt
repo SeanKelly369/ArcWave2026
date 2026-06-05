@@ -117,13 +117,12 @@ fun NowPlayingCard (
                     )
                 }
 
-                ArcPlayPauseButton(
+                RedPlayPauseButton(
                     isPlaying = state.isPlaying,
                     enabled = state.queue.isNotEmpty(),
                     onClick = onToggle,
-                    width = 88.dp,
-                    height = 48.dp,
-                    iconSize = 40.dp
+                    size = 84.dp,
+                    iconSize = 38.dp
                 )
 
                 OutlinedButton(

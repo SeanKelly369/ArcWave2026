@@ -24,6 +24,9 @@ actual fun appIconPainter(icon: AppIcon): Painter = when (icon) {
     AppIcon.TopRowReload -> painterResource(id = R.drawable.ic_top_row_reload)
     AppIcon.TopRowPlaylists -> painterResource(id = R.drawable.ic_top_row_playlists)
     AppIcon.TopRowSaveQueue -> painterResource(id = R.drawable.ic_top_row_save_queue)
+
+    AppIcon.RedButtonHousing -> painterResource(id = R.drawable.red_button_housing)
+    AppIcon.WhiteButtonHousing -> painterResource(id = R.drawable.white_button_housing)
 }
 
 actual val iconSize: Dp = 30.dp

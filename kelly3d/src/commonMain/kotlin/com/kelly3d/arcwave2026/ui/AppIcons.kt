@@ -20,7 +20,10 @@ enum class AppIcon {
 
     TopRowReload,
     TopRowSaveQueue,
-    TopRowPlaylists
+    TopRowPlaylists,
+
+    RedButtonHousing,
+    WhiteButtonHousing
 }
 
 @Composable
