@@ -6,15 +6,24 @@ import androidx.compose.ui.unit.Dp
 
 enum class AppIcon {
     OpenCloseArrow,
+
     Play,
     Pause,
     Next,
     Prev,
+
+    SeekBack,
+    SeekForward,
+
     Shuffle,
     Repeat,
+
     TopRowReload,
     TopRowSaveQueue,
-    TopRowPlaylists
+    TopRowPlaylists,
+
+    RedButtonHousing,
+    WhiteButtonHousing
 }
 
 @Composable
