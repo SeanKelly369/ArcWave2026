@@ -12,6 +12,7 @@ import arcwave.kelly3d.generated.resources.pause
 import arcwave.kelly3d.generated.resources.play
 import arcwave.kelly3d.generated.resources.repeat
 import arcwave.kelly3d.generated.resources.skip
+import arcwave.kelly3d.generated.resources.skip_seconds
 import arcwave.kelly3d.generated.resources.shuffle
 import org.jetbrains.compose.resources.painterResource
 
@@ -23,6 +24,8 @@ actual fun appIconPainter(icon: AppIcon): Painter {
         AppIcon.Pause -> Res.drawable.pause
         AppIcon.Next -> Res.drawable.skip
         AppIcon.Prev -> Res.drawable.skip
+        AppIcon.SeekBack -> Res.drawable.skip_seconds
+        AppIcon.SeekForward -> Res.drawable.skip_seconds
         AppIcon.Shuffle -> Res.drawable.shuffle
         AppIcon.Repeat -> Res.drawable.repeat
         AppIcon.TopRowReload -> Res.drawable.ic_top_row_reload

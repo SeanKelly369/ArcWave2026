@@ -10,11 +10,16 @@ enum class AppIcon {
     Pause,
     Next,
     Prev,
+
+    SeekBack,
+    SeekForward,
+
     Shuffle,
     Repeat,
+
     TopRowReload,
     TopRowSaveQueue,
-    TopRowPlaylists
+    TopRowPlaylists,
 }
 
 @Composable

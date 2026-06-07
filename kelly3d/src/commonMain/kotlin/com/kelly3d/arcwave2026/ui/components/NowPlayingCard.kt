@@ -27,7 +27,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
@@ -38,6 +37,8 @@ import com.kelly3d.arcwave2026.ui.ArcSeekBar
 import com.kelly3d.arcwave2026.ui.appIconPainter
 import com.kelly3d.arcwave2026.ui.iconSize
 import com.kelly3d.arcwave2026.utils.formatMs
+
+private const val SEEK_STEP_MS = 10_000L
 
 @Composable
 fun NowPlayingCard (
@@ -57,7 +58,7 @@ fun NowPlayingCard (
     arcDiameter: Dp = 260.dp
 ) {
     Card(
-        modifier.padding(12.dp)
+        modifier = modifier.padding(12.dp)
 
     ) {
         Column(
@@ -105,6 +106,28 @@ fun NowPlayingCard (
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
+                TransportCircleButton(
+                    icon = AppIcon.Prev,
+                    contentDescription = "Previous track",
+                    enabled = state.queue.isNotEmpty(),
+                    onClick = onPrev,
+                    size = 48.dp,
+                    iconSize = 22.dp
+                )
+
+                TransportCircleButton(
+                    icon = AppIcon.SeekBack,
+                    contentDescription = "Rewind 10 seconds",
+                    enabled = state.queue.isNotEmpty() && durationMs > 1L,
+                    onClick = {
+                        val targetMs = (dragMs + SEEK_STEP_MS).coerceAtMost(durationMs)
+                        onSeekTo(targetMs)
+                    },
+                    size = 48.dp,
+                    iconSize = 22.dp
+
+                )
+
                 OutlinedButton(
                     onClick = onPrev,
                     enabled = state.queue.isNotEmpty(),
