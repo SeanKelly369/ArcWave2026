@@ -10,12 +10,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -35,13 +33,12 @@ import com.kelly3d.arcwave2026.player.PlayerState
 import com.kelly3d.arcwave2026.ui.AppIcon
 import com.kelly3d.arcwave2026.ui.ArcSeekBar
 import com.kelly3d.arcwave2026.ui.appIconPainter
-import com.kelly3d.arcwave2026.ui.iconSize
 import com.kelly3d.arcwave2026.utils.formatMs
 
 private const val SEEK_STEP_MS = 10_000L
 
 @Composable
-fun NowPlayingCard (
+fun NowPlayingCard(
     state: PlayerState,
     durationMs: Long,
     dragMs: Long,
@@ -59,7 +56,6 @@ fun NowPlayingCard (
 ) {
     Card(
         modifier = modifier.padding(12.dp)
-
     ) {
         Column(
             modifier = Modifier
@@ -103,7 +99,7 @@ fun NowPlayingCard (
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
+                horizontalArrangement = Arrangement.SpaceEvenly,
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 TransportCircleButton(
@@ -120,55 +116,50 @@ fun NowPlayingCard (
                     contentDescription = "Rewind 10 seconds",
                     enabled = state.queue.isNotEmpty() && durationMs > 1L,
                     onClick = {
+                        val targetMs = (dragMs - SEEK_STEP_MS).coerceAtLeast(0L)
+                        onSeekTo(targetMs)
+                    },
+                    size = 54.dp,
+                    iconSize = 26.dp
+                )
+
+                RedPlayPauseButton(
+                    isPlaying = state.isPlaying,
+                    enabled = state.queue.isNotEmpty(),
+                    onClick = onToggle,
+                    size = 78.dp,
+                    iconSize = 34.dp
+                )
+
+                TransportCircleButton(
+                    icon = AppIcon.SeekForward,
+                    contentDescription = "Skip forward 10 seconds",
+                    enabled = state.queue.isNotEmpty() && durationMs > 1L,
+                    onClick = {
                         val targetMs = (dragMs + SEEK_STEP_MS).coerceAtMost(durationMs)
                         onSeekTo(targetMs)
                     },
-                    size = 48.dp,
-                    iconSize = 22.dp
-
+                    size = 54.dp,
+                    iconSize = 26.dp
                 )
 
-                OutlinedButton(
-                    onClick = onPrev,
+                TransportCircleButton(
+                    icon = AppIcon.Next,
+                    contentDescription = "Next track",
                     enabled = state.queue.isNotEmpty(),
-                ) { 
-                    Icon(
-                        painter = appIconPainter(AppIcon.Prev),
-                        contentDescription = "Previous",
-                        modifier = Modifier
-                            .size(iconSize)
-                            .rotate(180f)
-                    )
-                }
-
-                Button(
-                    onClick = onToggle,
-                    enabled = state.queue.isNotEmpty(),
-                ) {
-                    Icon(
-                        painter = appIconPainter(if (state.isPlaying) AppIcon.Pause else AppIcon.Play),
-                        contentDescription = if (state.isPlaying) "Pause" else "Play",
-                        modifier = Modifier.size(iconSize)
-                    )
-                }
-
-                OutlinedButton(
                     onClick = onNext,
-                    enabled = state.queue.isNotEmpty(),
-                ) { 
-                    Icon(
-                        painter = appIconPainter(AppIcon.Next),
-                        contentDescription = "Next",
-                        modifier = Modifier.size(iconSize)
-                    )
-                }
+                    size = 48.dp,
+                    iconSize = 22.dp
+                )
             }
 
             var isLinearScrubbing by remember { mutableStateOf(false) }
             var linearDragMs by remember { mutableStateOf(dragMs) }
 
             LaunchedEffect(dragMs, isLinearScrubbing) {
-                if (!isLinearScrubbing) linearDragMs = dragMs
+                if (!isLinearScrubbing) {
+                    linearDragMs = dragMs
+                }
             }
 
             Slider(
@@ -179,10 +170,9 @@ fun NowPlayingCard (
 
                     val ms = (frac * durationMs).toLong().coerceIn(0L, durationMs)
                     linearDragMs = ms
-                    onDragMsChange((frac * durationMs).toLong())
+                    onDragMsChange(ms)
                 },
                 onValueChangeFinished = {
-                    // use the local value, not the (possibly stale) parameter
                     val ms = linearDragMs.coerceIn(0L, durationMs)
                     isLinearScrubbing = false
                     onDraggingChange(false)
@@ -199,12 +189,13 @@ fun NowPlayingCard (
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    formatMs(dragMs),
+                    text = formatMs(dragMs),
                     style = MaterialTheme.typography.labelMedium,
                     fontFamily = FontFamily.Monospace
                 )
+
                 Text(
-                    formatMs(durationMs),
+                    text = formatMs(durationMs),
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -220,7 +211,11 @@ fun NowPlayingCard (
                     IconButton(onClick = onArcMenuToggle) {
                         Icon(
                             painter = appIconPainter(AppIcon.OpenCloseArrow),
-                            contentDescription = if (arcMenuOpen) "Close arc menu" else "Open arc menu",
+                            contentDescription = if (arcMenuOpen) {
+                                "Close arc menu"
+                            } else {
+                                "Open arc menu"
+                            },
                             modifier = Modifier.rotate(if (arcMenuOpen) 180f else 0f)
                         )
                     }
@@ -245,7 +240,9 @@ fun NowPlayingCard (
                     val localPos = (displayMs - startAbs).coerceIn(0L, windowLen)
 
                     Column(
-                        modifier = Modifier.fillMaxWidth().padding(8.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(8.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         ArcSeekBar(
@@ -278,7 +275,7 @@ fun NowPlayingCard (
                         Spacer(Modifier.height(8.dp))
 
                         Text(
-                            formatMs(dragMs),
+                            text = formatMs(dragMs),
                             style = MaterialTheme.typography.labelMedium,
                             fontFamily = FontFamily.Monospace,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -295,7 +292,7 @@ private fun computeSeekWindow(
     durationMs: Long,
     windowMs: Long
 ): Pair<Long, Long> {
-    if(durationMs <= windowMs) return 0L to durationMs
+    if (durationMs <= windowMs) return 0L to durationMs
 
     val half = windowMs / 2
     var start = anchorMs - half
@@ -310,5 +307,6 @@ private fun computeSeekWindow(
         end = durationMs
         start = durationMs - windowMs
     }
+
     return start to end
 }

@@ -26,7 +26,7 @@ fun RedPlayPauseButton (
     enabled: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    size: Dp = 72.dp,
+    size: Dp = 78.dp,
     iconSize: Dp = 32.dp
 ) {
     val interactionSource = remember { MutableInteractionSource() }
