@@ -1,5 +1,6 @@
 package com.kelly3d.arcwave2026.ui
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -47,6 +48,7 @@ fun ArcWaveApp() {
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun ArcWaveContent() {
     var pendingSeekMs by remember { mutableStateOf<Long?>(null) }
