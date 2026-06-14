@@ -14,13 +14,20 @@ actual fun appIconPainter(icon: AppIcon): Painter = when (icon) {
     AppIcon.Pause -> painterResource(id = R.drawable.pause)
     AppIcon.Next -> painterResource(id = R.drawable.skip)
     AppIcon.Prev -> painterResource(id = R.drawable.skip)
+
     AppIcon.SeekBack -> painterResource(id = R.drawable.skip_seconds)
     AppIcon.SeekForward -> painterResource(id = R.drawable.skip_seconds)
+
     AppIcon.Shuffle -> painterResource(id = R.drawable.shuffle)
     AppIcon.Repeat -> painterResource(id = R.drawable.repeat)
+
     AppIcon.TopRowReload -> painterResource(id = R.drawable.ic_top_row_reload)
     AppIcon.TopRowPlaylists -> painterResource(id = R.drawable.ic_top_row_playlists)
     AppIcon.TopRowSaveQueue -> painterResource(id = R.drawable.ic_top_row_save_queue)
+
+    AppIcon.RedButtonHousing -> painterResource(id = R.drawable.red_button_housing)
+    AppIcon.RedButtonHousingPressed -> painterResource(id = R.drawable.red_button_housing_pressed)
+    AppIcon.WhiteButtonHousing -> painterResource(id = R.drawable.white_button_housing)
 }
 
 actual val iconSize: Dp = 30.dp
