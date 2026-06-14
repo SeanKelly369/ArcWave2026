@@ -30,6 +30,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.kelly3d.arcwave2026.ui.AppIcon
 import com.kelly3d.arcwave2026.ui.appIconPainter
+import com.kelly3d.arcwave2026.getPlatform
+import com.kelly3d.arcwave2026.isIos
 
 @Composable
 fun LibraryActionButtonsRow(
@@ -134,7 +136,7 @@ private fun LibraryActionButton(
         Icon(
             painter = appIconPainter(icon),
             contentDescription = null,
-            modifier = Modifier.size(18.dp),
+            modifier = Modifier.size(if (getPlatform().isIos) 14.dp else 22.dp),
             tint = Color.Unspecified
         )
 

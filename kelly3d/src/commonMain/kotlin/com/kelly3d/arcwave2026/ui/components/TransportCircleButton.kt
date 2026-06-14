@@ -24,6 +24,8 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.kelly3d.arcwave2026.ui.AppIcon
 import com.kelly3d.arcwave2026.ui.appIconPainter
+import com.kelly3d.arcwave2026.getPlatform
+import com.kelly3d.arcwave2026.isIos
 
 @Composable
 fun TransportCircleButton (
@@ -33,7 +35,7 @@ fun TransportCircleButton (
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     size: Dp = 56.dp,
-    iconSize: Dp = 24.dp,
+    iconSize: Dp = if (getPlatform().isIos) 18.dp else 28.dp,
     iconTint: Color = Color(0xFF101827)
     ) {
     val interactionSource = remember { MutableInteractionSource() }

@@ -34,6 +34,8 @@ import com.kelly3d.arcwave2026.ui.AppIcon
 import com.kelly3d.arcwave2026.ui.ArcSeekBar
 import com.kelly3d.arcwave2026.ui.appIconPainter
 import com.kelly3d.arcwave2026.utils.formatMs
+import com.kelly3d.arcwave2026.getPlatform
+import com.kelly3d.arcwave2026.isIos
 
 private const val SEEK_STEP_MS = 10_000L
 
@@ -108,7 +110,7 @@ fun NowPlayingCard(
                     enabled = state.queue.isNotEmpty(),
                     onClick = onPrev,
                     size = 48.dp,
-                    iconSize = 22.dp
+                    iconSize = if (getPlatform().isIos) 15.dp else 25.dp
                 )
 
                 TransportCircleButton(
@@ -120,7 +122,7 @@ fun NowPlayingCard(
                         onSeekTo(targetMs)
                     },
                     size = 54.dp,
-                    iconSize = 26.dp
+                    iconSize = if (getPlatform().isIos) 19.dp else 29.dp
                 )
 
                 RedPlayPauseButton(
@@ -128,7 +130,7 @@ fun NowPlayingCard(
                     enabled = state.queue.isNotEmpty(),
                     onClick = onToggle,
                     size = 78.dp,
-                    iconSize = 34.dp
+                    iconSize = if (getPlatform().isIos) 24.dp else 42.dp
                 )
 
                 TransportCircleButton(
@@ -140,7 +142,7 @@ fun NowPlayingCard(
                         onSeekTo(targetMs)
                     },
                     size = 54.dp,
-                    iconSize = 26.dp
+                    iconSize = if (getPlatform().isIos) 19.dp else 29.dp
                 )
 
                 TransportCircleButton(
@@ -149,7 +151,7 @@ fun NowPlayingCard(
                     enabled = state.queue.isNotEmpty(),
                     onClick = onNext,
                     size = 48.dp,
-                    iconSize = 22.dp
+                    iconSize = if (getPlatform().isIos) 15.dp else 25.dp
                 )
             }
 

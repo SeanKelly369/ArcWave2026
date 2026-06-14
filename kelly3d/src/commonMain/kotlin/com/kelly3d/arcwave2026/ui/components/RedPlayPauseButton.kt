@@ -23,6 +23,8 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.kelly3d.arcwave2026.ui.AppIcon
 import com.kelly3d.arcwave2026.ui.appIconPainter
+import com.kelly3d.arcwave2026.getPlatform
+import com.kelly3d.arcwave2026.isIos
 import kotlinx.coroutines.delay
 
 @Composable
@@ -32,7 +34,7 @@ fun RedPlayPauseButton (
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     size: Dp = 78.dp,
-    iconSize: Dp = 32.dp,
+    iconSize: Dp = if (getPlatform().isIos) 24.dp else 40.dp,
     hitAreaSize: Dp = 78.dp
 ) {
     val interactionSource = remember { MutableInteractionSource() }
