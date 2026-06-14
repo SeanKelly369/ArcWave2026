@@ -34,7 +34,7 @@ fun RedPlayPauseButton (
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     size: Dp = 78.dp,
-    iconSize: Dp = if (getPlatform().isIos) 24.dp else 40.dp,
+    iconSize: Dp = 42.dp,
     hitAreaSize: Dp = 78.dp
 ) {
     val interactionSource = remember { MutableInteractionSource() }

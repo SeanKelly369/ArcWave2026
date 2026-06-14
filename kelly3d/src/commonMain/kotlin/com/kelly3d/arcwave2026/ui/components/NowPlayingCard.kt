@@ -110,7 +110,8 @@ fun NowPlayingCard(
                     enabled = state.queue.isNotEmpty(),
                     onClick = onPrev,
                     size = 48.dp,
-                    iconSize = if (getPlatform().isIos) 15.dp else 25.dp
+                    iconSize = 25.dp,
+                    flipIcon = true
                 )
 
                 TransportCircleButton(
@@ -122,7 +123,8 @@ fun NowPlayingCard(
                         onSeekTo(targetMs)
                     },
                     size = 54.dp,
-                    iconSize = if (getPlatform().isIos) 19.dp else 29.dp
+                    iconSize = 29.dp,
+                    flipIcon = true
                 )
 
                 RedPlayPauseButton(
@@ -130,7 +132,7 @@ fun NowPlayingCard(
                     enabled = state.queue.isNotEmpty(),
                     onClick = onToggle,
                     size = 78.dp,
-                    iconSize = if (getPlatform().isIos) 24.dp else 42.dp
+                    iconSize = 42.dp
                 )
 
                 TransportCircleButton(
@@ -142,7 +144,7 @@ fun NowPlayingCard(
                         onSeekTo(targetMs)
                     },
                     size = 54.dp,
-                    iconSize = if (getPlatform().isIos) 19.dp else 29.dp
+                    iconSize = 29.dp
                 )
 
                 TransportCircleButton(
@@ -151,7 +153,7 @@ fun NowPlayingCard(
                     enabled = state.queue.isNotEmpty(),
                     onClick = onNext,
                     size = 48.dp,
-                    iconSize = if (getPlatform().isIos) 15.dp else 25.dp
+                    iconSize = 25.dp
                 )
             }
 

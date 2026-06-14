@@ -35,8 +35,9 @@ fun TransportCircleButton (
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     size: Dp = 56.dp,
-    iconSize: Dp = if (getPlatform().isIos) 18.dp else 28.dp,
-    iconTint: Color = Color(0xFF101827)
+    iconSize: Dp = 28.dp,
+    iconTint: Color = Color(0xFF101827),
+    flipIcon: Boolean = false
     ) {
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed by interactionSource.collectIsPressedAsState()
@@ -87,7 +88,9 @@ fun TransportCircleButton (
         Icon(
             painter = appIconPainter(icon),
             contentDescription = contentDescription,
-            modifier = Modifier.size(iconSize),
+            modifier = Modifier
+                .size(iconSize)
+                .scale(scaleX = if (flipIcon) -1f else 1f, scaleY = 1f),
             tint = iconTint
         )
     }

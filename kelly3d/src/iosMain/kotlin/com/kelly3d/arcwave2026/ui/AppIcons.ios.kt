@@ -2,6 +2,7 @@ package com.kelly3d.arcwave2026.ui
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import arcwave.kelly3d.generated.resources.Res
 import arcwave.kelly3d.generated.resources.ic_top_row_playlists
@@ -45,4 +46,4 @@ actual fun appIconPainter(icon: AppIcon): Painter {
     return painterResource(res)
 }
 
-actual val iconSize = 12.dp
+actual val iconSize: Dp = 12.dp

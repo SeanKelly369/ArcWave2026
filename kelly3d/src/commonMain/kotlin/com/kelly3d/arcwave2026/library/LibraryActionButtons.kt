@@ -136,7 +136,7 @@ private fun LibraryActionButton(
         Icon(
             painter = appIconPainter(icon),
             contentDescription = null,
-            modifier = Modifier.size(if (getPlatform().isIos) 14.dp else 22.dp),
+            modifier = Modifier.size(22.dp),
             tint = Color.Unspecified
         )
 
