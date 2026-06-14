@@ -6,7 +6,6 @@ import androidx.compose.ui.unit.Dp
 
 enum class AppIcon {
     OpenCloseArrow,
-
     Play,
     Pause,
     Next,
@@ -23,7 +22,8 @@ enum class AppIcon {
     TopRowPlaylists,
 
     RedButtonHousing,
-    WhiteButtonHousing
+    RedButtonHousingPressed,
+    WhiteButtonHousing,
 }
 
 @Composable
