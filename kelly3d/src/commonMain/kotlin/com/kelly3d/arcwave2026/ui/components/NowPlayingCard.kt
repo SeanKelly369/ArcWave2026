@@ -14,7 +14,6 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -32,10 +31,9 @@ import androidx.compose.ui.unit.dp
 import com.kelly3d.arcwave2026.player.PlayerState
 import com.kelly3d.arcwave2026.ui.AppIcon
 import com.kelly3d.arcwave2026.ui.ArcSeekBar
+import com.kelly3d.arcwave2026.ui.LinearSeekBar
 import com.kelly3d.arcwave2026.ui.appIconPainter
 import com.kelly3d.arcwave2026.utils.formatMs
-import com.kelly3d.arcwave2026.getPlatform
-import com.kelly3d.arcwave2026.isIos
 
 private const val SEEK_STEP_MS = 10_000L
 
@@ -166,7 +164,7 @@ fun NowPlayingCard(
                 }
             }
 
-            Slider(
+            LinearSeekBar(
                 value = (linearDragMs.toFloat() / durationMs.toFloat()).coerceIn(0f, 1f),
                 onValueChange = { frac ->
                     isLinearScrubbing = true
@@ -182,28 +180,11 @@ fun NowPlayingCard(
                     onDraggingChange(false)
                     onSeekTo(ms)
                 },
+                currentTime = formatMs(dragMs),
+                totalTime = formatMs(durationMs),
                 enabled = state.queue.isNotEmpty() && durationMs > 1L,
                 modifier = Modifier.fillMaxWidth()
             )
-
-            Spacer(Modifier.height(6.dp))
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(
-                    text = formatMs(dragMs),
-                    style = MaterialTheme.typography.labelMedium,
-                    fontFamily = FontFamily.Monospace
-                )
-
-                Text(
-                    text = formatMs(durationMs),
-                    style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
 
             Spacer(Modifier.height(6.dp))
 
