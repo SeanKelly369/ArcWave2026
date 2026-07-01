@@ -42,7 +42,9 @@ fun LibraryActionButtonsRow(
     modifier: Modifier = Modifier
 ) {
     Row(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 12.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -120,7 +122,7 @@ private fun LibraryActionButton(
         interactionSource = interactionSource,
         shape = RoundedCornerShape(18.dp),
         border = BorderStroke(1.dp, borderColour),
-        contentPadding = PaddingValues(horizontal = 10.dp, vertical = 6.dp),
+        contentPadding = PaddingValues(horizontal = 8.dp, vertical = 4.dp),
         colors = ButtonDefaults.outlinedButtonColors(
             containerColor = backgroundColour,
             contentColor = contentColour,
@@ -128,22 +130,23 @@ private fun LibraryActionButton(
             disabledContentColor = Color(0xFFAAA7B0)
         ),
         modifier = modifier
-            .padding(horizontal = 16.dp)
-            .defaultMinSize(minHeight = 42.dp)
+            .defaultMinSize(minHeight = 38.dp)
             .scale(scale)
             .offset(y = offsetY)
         ) {
         Icon(
             painter = appIconPainter(icon),
             contentDescription = null,
-            modifier = Modifier.size(22.dp),
+            modifier = Modifier.size(18.dp),
             tint = Color.Unspecified
         )
 
         Text(
             text = text,
-            style = MaterialTheme.typography.labelLarge,
-            modifier = Modifier.padding(start = 4.dp)
+            style = MaterialTheme.typography.labelMedium,
+            modifier = Modifier.padding(start = 4.dp),
+            maxLines = 1,
+            softWrap = false
         )
     }
 }
