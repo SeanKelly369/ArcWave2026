@@ -1,9 +1,11 @@
 package com.kelly3d.arcwave2026.ui.components
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
@@ -18,9 +20,14 @@ fun QueueSection(
     queue: List<Track>,
     currentIndex: Int,
     isPlaying: Boolean,
-    onTapTrack: (Int) -> Unit
+    onTapTrack: (Int) -> Unit,
+    modifier: Modifier = Modifier
 ) {
-    Text("Queue", style = MaterialTheme.typography.titleMedium)
+    Text(
+        "Queue",
+        style = MaterialTheme.typography.titleMedium,
+        modifier = modifier.padding(horizontal = 16.dp)
+    )
     Spacer(Modifier.height(8.dp))
 
     queue.forEachIndexed { idx, t ->

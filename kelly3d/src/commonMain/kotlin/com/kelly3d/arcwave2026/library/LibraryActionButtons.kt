@@ -30,8 +30,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.kelly3d.arcwave2026.ui.AppIcon
 import com.kelly3d.arcwave2026.ui.appIconPainter
-import com.kelly3d.arcwave2026.getPlatform
-import com.kelly3d.arcwave2026.isIos
 
 @Composable
 fun LibraryActionButtonsRow(
