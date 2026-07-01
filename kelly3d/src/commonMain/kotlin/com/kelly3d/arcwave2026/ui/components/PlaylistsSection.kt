@@ -4,6 +4,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
@@ -24,12 +25,17 @@ fun PlaylistsSection(
     Text(
         "Playlists",
         style = MaterialTheme.typography.titleMedium,
-        modifier = modifier
+        modifier = modifier.padding(horizontal = 16.dp)
     )
     Spacer(Modifier.height(8.dp))
 
     if (playlists.isEmpty()) {
-        Text("No playlists yet.", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+        Text(
+            "No playlists yet.",
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.padding(horizontal = 16.dp)
+        )
         return
     }
 

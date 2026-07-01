@@ -1,7 +1,9 @@
 package com.kelly3d.arcwave2026.ui.components
 
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -16,7 +18,10 @@ fun LoadErrorText(loadError: String?) {
         Text(
             text = it,
             style = MaterialTheme.typography.bodySmall,
-            color = Color(0xFF444444)
+            color = Color(0xFF444444),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 12.dp, end = 6.dp, top = 8.dp)
         )
     }
 }
